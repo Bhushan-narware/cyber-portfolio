@@ -1111,7 +1111,6 @@ function initHUDControls() {
   // Print Resume PDF (Clean print view)
   printResumeBtn.addEventListener('click', () => {
     playBeep(1200, 0.2, 'sine');
-    window.print();
   });
 
   // Diagnostic Audit trigger
