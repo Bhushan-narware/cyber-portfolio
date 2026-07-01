@@ -989,8 +989,22 @@ function initGSAPAnimations() {
     });
   });
 
+  // Academic cards slide in and float
+  const eduCards = document.querySelectorAll('#education-hud .hover-tilt');
+  gsap.from(eduCards, {
+    scale: 0.9,
+    opacity: 0,
+    y: 40,
+    stagger: 0.12,
+    duration: 0.8,
+    scrollTrigger: {
+      trigger: '#education-hud',
+      start: "top 80%",
+    }
+  });
+
   // Certifications slide in and float
-  const certCards = document.querySelectorAll('.hover-tilt');
+  const certCards = document.querySelectorAll('#certifications .hover-tilt');
   gsap.from(certCards, {
     scale: 0.9,
     opacity: 0,
