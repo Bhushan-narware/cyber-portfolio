@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Major digital nodes across the world grid
   const nodes = [
-    { name: 'BHOPAL_SEC_NODE (Bhushan)', x: 0.68, y: 0.52, isTarget: true },
+    { name: 'GLOBAL_SEC_NODE (Bhushan)', x: 0.68, y: 0.52, isTarget: true },
     { name: 'US_EAST_PROBE_7', x: 0.28, y: 0.35, isTarget: false },
     { name: 'UK_PROXY_SERVER', x: 0.48, y: 0.30, isTarget: false },
     { name: 'JP_TOKYO_GATEWAY', x: 0.85, y: 0.40, isTarget: false },
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="text-slate-500">[${timestamp}]</span> 
       <span class="text-cyber-pink font-semibold">[!] INTRUSION:</span> 
       <span class="${colorClass}">${type}</span><br>
-      <span class="pl-4 text-slate-400">SRC: ${origin} -> Bhopal Node</span><br>
+      <span class="pl-4 text-slate-400">SRC: ${origin} -> Global Node</span><br>
       <span class="pl-4 text-green-400 font-mono">[FW_RULE]: ${action} [OK]</span>
     `;
 
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Draw cyber digital coordinate background dots
   function drawBackgroundGrid() {
-    ctx.strokeStyle = 'rgba(0, 245, 255, 0.03)';
+    ctx.strokeStyle = 'rgba(255, 0, 0, 0.03)';
     ctx.lineWidth = 1;
     
     // Draw crosshair grid
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Grid dots
-    ctx.fillStyle = 'rgba(0, 245, 255, 0.08)';
+    ctx.fillStyle = 'rgba(255, 0, 0, 0.08)';
     for (let x = 20; x < width; x += 30) {
       for (let y = 20; y < height; y += 30) {
         ctx.fillRect(x, y, 1, 1);
@@ -103,16 +103,16 @@ document.addEventListener('DOMContentLoaded', () => {
       
       ctx.beginPath();
       ctx.arc(nx, ny, pulseRadius, 0, Math.PI * 2);
-      ctx.fillStyle = node.isTarget ? 'rgba(0, 245, 255, 0.15)' : 'rgba(138, 43, 226, 0.15)';
+      ctx.fillStyle = node.isTarget ? 'rgba(255, 0, 0, 0.15)' : 'rgba(255, 127, 0, 0.15)';
       ctx.fill();
       ctx.lineWidth = 1;
-      ctx.strokeStyle = node.isTarget ? '#00F5FF' : '#8A2BE2';
+      ctx.strokeStyle = node.isTarget ? '#ff0000' : '#ff7700';
       ctx.stroke();
 
       // Core dot
       ctx.beginPath();
       ctx.arc(nx, ny, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = node.isTarget ? '#00FFFF' : '#bd00ff';
+      ctx.fillStyle = node.isTarget ? '#ff3b3b' : '#ffaa00';
       ctx.fill();
 
       // Text labels
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
       endX, endY,
       progress: 0,
       speed: 0.012 + Math.random() * 0.008,
-      color: attackInfo.severity === 'CRITICAL' ? '#FF007F' : (attackInfo.severity === 'HIGH' ? '#8A2BE2' : '#00FFFF'),
+      color: attackInfo.severity === 'CRITICAL' ? '#ff0055' : (attackInfo.severity === 'HIGH' ? '#ff3300' : '#ffcc00'),
       originName: originNode.name,
       ...attackInfo
     });

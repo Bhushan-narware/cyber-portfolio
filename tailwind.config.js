@@ -9,22 +9,25 @@ export default {
     extend: {
       colors: {
         cyber: {
-          black: '#050508',
-          dark: '#0a0a0f',
-          gray: '#0f111a',
-          light: '#181b28',
-          accent: '#00F5FF',
-          purple: '#8A2BE2',
-          cyan: '#00FFFF',
-          pink: '#FF007F',
-          border: 'rgba(0, 245, 255, 0.15)',
-          glow: 'rgba(138, 43, 226, 0.3)'
+          black: '#000000',
+          dark: '#0f0f0f',
+          gray: '#111111',
+          light: '#181818',
+          accent: '#ff0000',
+          purple: '#b30000',
+          cyan: '#ff4444',
+          pink: '#ff2b2b',
+          border: 'rgba(255, 0, 0, 0.2)',
+          glow: 'rgba(255, 43, 43, 0.35)'
         }
       },
       fontFamily: {
         orbitron: ['Orbitron', 'sans-serif'],
+        space: ['Space Grotesk', 'sans-serif'],
+        clash: ['Clash Display', 'sans-serif'],
+        satoshi: ['Satoshi', 'sans-serif'],
         inter: ['Inter', 'sans-serif'],
-        mono: ['Fira Code', 'Courier New', 'monospace']
+        mono: ['Share Tech Mono', 'Courier New', 'monospace']
       },
       animation: {
         'glitch': 'glitch 1s linear infinite',

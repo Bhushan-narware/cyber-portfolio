@@ -20,14 +20,14 @@ a, button, select, input, textarea {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(138, 43, 226, 0.4);
+  background: rgba(255, 0, 0, 0.4);
   border-radius: 4px;
-  border: 1px solid rgba(0, 245, 255, 0.15);
+  border: 1px solid rgba(255, 43, 43, 0.2);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 245, 255, 0.6);
-  box-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+  background: rgba(255, 0, 0, 0.75);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.65);
 }
 
 /* Glassmorphism Styles */
@@ -38,18 +38,18 @@ a, button, select, input, textarea {
 
 /* GLOW UTILITIES */
 .glow-blue {
-  box-shadow: 0 0 15px rgba(0, 245, 255, 0.35);
-  border-color: rgba(0, 245, 255, 0.6);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.35);
+  border-color: rgba(255, 0, 0, 0.6);
 }
 
 .glow-purple {
-  box-shadow: 0 0 15px rgba(138, 43, 226, 0.35);
-  border-color: rgba(138, 43, 226, 0.6);
+  box-shadow: 0 0 15px rgba(255, 43, 43, 0.35);
+  border-color: rgba(255, 43, 43, 0.6);
 }
 
 .glow-pink {
-  box-shadow: 0 0 15px rgba(255, 0, 127, 0.35);
-  border-color: rgba(255, 0, 127, 0.6);
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.35);
+  border-color: rgba(255, 68, 68, 0.6);
 }
 
 /* GLITCH TEXT EFFECT */
@@ -70,14 +70,14 @@ a, button, select, input, textarea {
 
 .glitch-text::before {
   left: 1px;
-  text-shadow: -1px 0 #FF007F;
+  text-shadow: -1px 0 #ff0000;
   clip: rect(44px, 450px, 56px, 0);
   animation: glitch-anim 5s infinite linear alternate-reverse;
 }
 
 .glitch-text::after {
   left: -1px;
-  text-shadow: -1px 0 #00F5FF, 0 1px #FF007F;
+  text-shadow: -1px 0 #ffffff, 0 1px #ff0000;
   clip: rect(85px, 450px, 140px, 0);
   animation: glitch-anim2 5s infinite linear alternate-reverse;
 }
@@ -188,7 +188,7 @@ body.light-theme .bg-cyber-black\/85 {
   transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
-  border: 1px solid rgba(0, 245, 255, 0.4);
+  border: 1px solid rgba(255, 0, 0, 0.4);
   border-radius: 50%;
   animation: pulse-ring 2s cubic-bezier(0.215, 0.610, 0.355, 1) infinite;
   pointer-events: none;
@@ -203,9 +203,9 @@ body.light-theme .bg-cyber-black\/85 {
 #cyber-cursor.expand {
   width: 32px;
   height: 32px;
-  background-color: rgba(0, 245, 255, 0.1);
-  border-color: rgba(0, 245, 255, 0.8);
-  box-shadow: 0 0 15px rgba(0, 245, 255, 0.5);
+  background-color: rgba(255, 0, 0, 0.1);
+  border-color: rgba(255, 0, 0, 0.8);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
 }
 
 /* Skill hover glow description triggers */
@@ -216,7 +216,7 @@ body.light-theme .bg-cyber-black\/85 {
 }
 
 .skill-container:hover {
-  background-color: rgba(0, 245, 255, 0.05);
+  background-color: rgba(255, 0, 0, 0.05);
 }
 
 /* Tilt effect properties */

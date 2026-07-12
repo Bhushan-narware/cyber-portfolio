@@ -9,7 +9,7 @@
   <!-- Font Styles -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -22,22 +22,23 @@
         extend: {
           colors: {
             cyber: {
-              black: '#050508',
-              dark: '#0a0a0f',
-              gray: '#0f111a',
-              light: '#181b28',
-              accent: '#00F5FF',
-              purple: '#8A2BE2',
-              cyan: '#00FFFF',
-              pink: '#FF007F',
-              border: 'rgba(0, 245, 255, 0.15)',
-              glow: 'rgba(138, 43, 226, 0.3)'
+              black: '#000000',
+              dark: '#0f0f0f',
+              gray: '#111111',
+              light: '#181818',
+              accent: '#ff0000',
+              purple: '#b30000',
+              cyan: '#ff4444',
+              pink: '#ff2b2b',
+              border: 'rgba(255, 0, 0, 0.2)',
+              glow: 'rgba(255, 43, 43, 0.35)'
             }
           },
           fontFamily: {
             orbitron: ['Orbitron', 'sans-serif'],
+            space: ['Space Grotesk', 'sans-serif'],
             inter: ['Inter', 'sans-serif'],
-            mono: ['Fira Code', 'Courier New', 'monospace']
+            mono: ['Share Tech Mono', 'monospace']
           }
         }
       }
@@ -55,7 +56,45 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 </head>
-<body class="bg-cyber-black text-slate-300 font-inter min-h-screen overflow-x-hidden selection:bg-cyber-accent selection:text-black">
+<body class="bg-cyber-black text-slate-300 font-space min-h-screen overflow-x-hidden selection:bg-cyber-accent selection:text-black">
+
+  <!-- INSANE INTRO LOADER OVERLAY -->
+  <div id="intro-loader" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center font-mono overflow-hidden">
+    <div class="max-w-md w-full px-6 space-y-8 relative">
+      <!-- Cyber Holographic Scanlines / Grid overlay inside loader -->
+      <div class="absolute inset-0 -z-10 pointer-events-none opacity-5 bg-[linear-gradient(rgba(255,0,0,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(255,0,0,0.15)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+      
+      <!-- Glowing Red Rotating Core Grid -->
+      <div class="flex flex-col items-center justify-center space-y-4">
+        <div class="relative w-24 h-24 flex items-center justify-center">
+          <div class="absolute inset-0 rounded-full border-2 border-dashed border-cyber-accent animate-[spin_4s_linear_infinite]"></div>
+          <div class="absolute inset-2 rounded-full border border-double border-cyber-accent/40 animate-[spin_8s_linear_infinite_reverse]"></div>
+          <div class="absolute inset-5 rounded-full border border-dotted border-cyber-accent/20 animate-pulse"></div>
+          <span class="text-cyber-accent font-orbitron font-black text-xl tracking-wider select-none glitch-text" data-text="BN">BN</span>
+        </div>
+        <div class="text-center">
+          <h2 class="text-xs font-bold font-orbitron text-cyber-accent tracking-[0.3em] uppercase glitch-text" data-text="BHUSHAN // SEC_UPLINK">BHUSHAN // SEC_UPLINK</h2>
+          <p class="text-[8px] text-cyber-purple tracking-[0.2em] uppercase mt-1">Establishing secure handshake...</p>
+        </div>
+      </div>
+
+      <!-- Loading terminal messages feed -->
+      <div id="loader-terminal" class="bg-black/80 border border-cyber-border p-4 rounded text-[9px] text-red-500 font-mono h-32 overflow-hidden leading-relaxed custom-scrollbar select-none">
+        <div class="text-cyber-purple">[UPLINK]: Initializing system handshake...</div>
+      </div>
+
+      <!-- Loading percentage bar -->
+      <div class="space-y-2">
+        <div class="flex justify-between text-[10px] text-slate-500 tracking-wider">
+          <span>DECRYPTING DATA MATRIX...</span>
+          <span id="loader-percentage" class="text-cyber-accent font-bold">0%</span>
+        </div>
+        <div class="w-full h-1 bg-cyber-light border border-cyber-border/40 rounded-full overflow-hidden">
+          <div id="loader-progress-bar" class="w-0 h-full bg-gradient-to-r from-cyber-accent to-cyber-pink transition-all duration-100 shadow-[0_0_10px_rgba(255,0,0,0.5)]"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Three.js Background Canvas -->
   <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full -z-20 pointer-events-none"></canvas>
@@ -65,14 +104,14 @@
   
   <!-- Cyber Digital Grid Overlay -->
   <div class="fixed top-0 left-0 w-full h-full -z-15 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(10,10,15,0)_0%,rgba(5,5,8,0.8)_85%)]"></div>
-  <div class="fixed top-0 left-0 w-full h-full -z-15 pointer-events-none opacity-10 bg-[linear-gradient(rgba(0,245,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,245,255,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
+  <div class="fixed top-0 left-0 w-full h-full -z-15 pointer-events-none opacity-10 bg-[linear-gradient(rgba(255,0,0,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,0,0,0.05)_1px,transparent_1px)] bg-[size:30px_30px]"></div>
 
   <!-- Custom Neon Cursor & Trail -->
   <div id="cyber-cursor" class="hidden md:block fixed w-4 h-4 rounded-full border border-cyber-accent bg-cyber-accent/20 pointer-events-none z-50 transform -translate-x-1/2 -translate-y-1/2 transition-[width,height,background-color] duration-300"></div>
   <div id="cursor-trail" class="hidden md:block fixed w-2 h-2 rounded-full bg-cyber-purple/50 pointer-events-none z-50 transform -translate-x-1/2 -translate-y-1/2 transition-[transform] duration-75"></div>
 
   <!-- Ambient Scanning Grid Scanner Line (Hologram Screen Effect) -->
-  <div class="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyber-accent/15 to-transparent shadow-[0_0_15px_rgba(0,245,255,0.3)] pointer-events-none z-40 animate-[radar_8s_infinite] opacity-50"></div>
+  <div class="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyber-accent/15 to-transparent shadow-[0_0_15px_rgba(255,0,0,0.3)] pointer-events-none z-40 animate-[radar_8s_infinite] opacity-50"></div>
 
   <!-- HUD NAVIGATION HEADER -->
   <header class="fixed top-0 left-0 w-full z-40 backdrop-blur-cyber bg-cyber-black/40 border-b border-cyber-border transition-all duration-300">
@@ -207,6 +246,31 @@
             </a>
           </div>
 
+          <!-- Real-Time clock, weather and visitor stats HUD -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded bg-cyber-light/40 border border-cyber-border font-mono text-[10px] text-slate-400">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-clock text-cyber-accent"></i>
+              <div>
+                <span class="text-slate-500">SYSTEM TIME:</span>
+                <span id="hud-clock" class="text-slate-300 font-semibold">12:00:00 UTC</span>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-cloud-sun text-cyber-purple"></i>
+              <div>
+                <span class="text-slate-500">WEATHER TARGET:</span>
+                <span class="text-slate-300 font-semibold">28°C // CLEAR // NE 12k/h</span>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-users text-cyber-pink"></i>
+              <div>
+                <span class="text-slate-500">VISITOR CORES:</span>
+                <span id="visitor-count" class="text-slate-300 font-semibold">004,289</span>
+              </div>
+            </div>
+          </div>
+
           <!-- Bottom micro-stats HUD -->
           <div class="grid grid-cols-3 gap-4 pt-8 border-t border-cyber-border max-w-md mx-auto lg:mx-0 text-left font-mono">
             <div>
@@ -282,15 +346,15 @@
         </h2>
       </div>
 
-      <!-- About Grid -->
+      <!-- About Grid (Top row: Profile & Bio) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         <!-- Profile Photo Panel -->
         <div class="lg:col-span-3 p-5 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-cyan shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber text-center relative group overflow-hidden hover-tilt">
           <!-- Cyber Scan Laser Line -->
-          <div class="absolute top-0 left-0 w-full h-[2px] bg-cyber-cyan shadow-[0_0_10px_#00F5FF] animate-[scan_3s_ease-in-out_infinite] z-20 pointer-events-none"></div>
+          <div class="absolute top-0 left-0 w-full h-[2px] bg-cyber-cyan shadow-[0_0_10px_#ff0000] animate-[scan_3s_ease-in-out_infinite] z-20 pointer-events-none"></div>
           
-          <div class="relative w-40 h-40 mx-auto rounded overflow-hidden border border-cyber-cyan/30 shadow-[0_0_15px_rgba(0,245,255,0.15)] mb-4 group-hover:border-cyber-cyan transition-colors">
+          <div class="relative w-40 h-40 mx-auto rounded overflow-hidden border border-cyber-cyan/30 shadow-[0_0_15px_rgba(255,0,0,0.15)] mb-4 group-hover:border-cyber-cyan transition-colors">
             <img src="https://avatars.githubusercontent.com/u/141825252?v=4" alt="Bhushan Narware" class="w-full h-full object-cover filter brightness-95 contrast-105 group-hover:scale-105 transition-transform duration-300">
             <!-- Scan grid pattern -->
             <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_4px,3px_100%] pointer-events-none"></div>
@@ -310,7 +374,7 @@
         </div>
 
         <!-- About Narrative (Glass Card) -->
-        <div class="lg:col-span-5 p-6 md:p-8 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber transition-all duration-300 relative group overflow-hidden">
+        <div class="lg:col-span-9 p-6 md:p-8 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber transition-colors duration-300 relative group overflow-hidden">
           <div class="absolute top-0 right-0 w-24 h-24 bg-cyber-accent/5 rounded-full blur-2xl pointer-events-none group-hover:bg-cyber-accent/10 transition-all"></div>
           
           <div class="absolute top-3 right-3 font-mono text-[9px] text-slate-600 tracking-wider">
@@ -340,12 +404,17 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- About Grid (Bottom row: Diagnostics & Timeline) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mt-8">
+        
         <!-- Cyber Diagnostic HUD Panel -->
         <div class="lg:col-span-4 space-y-6">
           <div class="p-6 rounded bg-cyber-gray border border-cyber-border hover:border-cyber-purple/40 backdrop-blur-cyber shadow-[0_0_20px_rgba(0,0,0,0.5)] transition-all">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-cyber-border/60 font-orbitron text-xs text-cyber-purple font-bold tracking-wider">
               <span>// SECURITY DIAGNOSTIC</span>
-              <span class="w-2 h-2 rounded-full bg-cyber-accent shadow-[0_0_8px_#00F5FF]"></span>
+              <span class="w-2 h-2 rounded-full bg-cyber-accent shadow-[0_0_8px_#ff0000]"></span>
             </div>
             
             <div class="space-y-4 font-mono text-[11px]">
@@ -392,7 +461,67 @@
           </div>
         </div>
 
-      </div>
+        <!-- Premium Timeline (Glass Cards) -->
+        <div class="lg:col-span-8 space-y-6">
+          <div class="p-6 rounded bg-cyber-gray border border-cyber-border backdrop-blur-cyber shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+            <div class="flex justify-between items-center mb-6 pb-2 border-b border-cyber-border/60 font-orbitron text-xs text-cyber-accent font-bold tracking-wider">
+              <span>// OPERATIONAL TIMELINE HISTORY</span>
+              <span class="text-slate-500 font-mono text-[9px] uppercase">[ CHRONO_LOG_SEC ]</span>
+            </div>
+
+            <!-- Vertical Timeline Layout -->
+            <div class="relative border-l-2 border-cyber-accent/30 ml-3 md:ml-6 pl-6 md:pl-8 space-y-8 py-2">
+              
+              <!-- Timeline Item 1: B.Tech -->
+              <div class="relative group">
+                <!-- Timeline Dot Indicator -->
+                <div class="absolute -left-[35px] md:-left-[43px] top-1.5 w-4 h-4 rounded-full border border-cyber-accent bg-black flex items-center justify-center">
+                  <div class="w-1.5 h-1.5 rounded-full bg-cyber-accent animate-ping absolute"></div>
+                  <div class="w-1.5 h-1.5 rounded-full bg-cyber-accent"></div>
+                </div>
+                <div class="p-4 rounded bg-cyber-light/30 border border-cyber-border hover:border-cyber-accent/40 shadow-md backdrop-blur-sm transition-colors duration-300">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-1">
+                    <h4 class="font-orbitron font-bold text-slate-100 text-sm tracking-wide">Bachelor of Technology (CSE)</h4>
+                    <span class="text-[9px] font-mono text-cyber-accent uppercase">[ Graduation: 2026 ]</span>
+                  </div>
+                  <div class="text-[10px] text-slate-500 font-mono mb-2">Bansal Institute of Research & Technology (M.P.)</div>
+                  <p class="text-xs text-slate-400 font-mono">Specializing in Computer Science & Engineering. CGPA: 6.4 / 10.0</p>
+                </div>
+              </div>
+
+              <!-- Timeline Item 2: Internships -->
+              <div class="relative group">
+                <div class="absolute -left-[35px] md:-left-[43px] top-1.5 w-4 h-4 rounded-full border border-cyber-purple bg-black flex items-center justify-center">
+                  <div class="w-1.5 h-1.5 rounded-full bg-cyber-purple"></div>
+                </div>
+                <div class="p-4 rounded bg-cyber-light/30 border border-cyber-border hover:border-cyber-purple/40 shadow-md backdrop-blur-sm transition-colors duration-300">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-1">
+                    <h4 class="font-orbitron font-bold text-slate-100 text-sm tracking-wide">Cybersecurity Internships</h4>
+                    <span class="text-[9px] font-mono text-cyber-purple uppercase">[ 2025 – 2026 ]</span>
+                  </div>
+                  <div class="text-[10px] text-slate-500 font-mono mb-2">Cybrom Technology & Naman Digital</div>
+                  <p class="text-xs text-slate-400 font-mono">Handled web security vulnerability remediation checks, automated network scanning logs with Kali, Nmap, and threat risk analysis.</p>
+                </div>
+              </div>
+
+              <!-- Timeline Item 3: Diploma -->
+              <div class="relative group">
+                <div class="absolute -left-[35px] md:-left-[43px] top-1.5 w-4 h-4 rounded-full border border-cyber-pink bg-black flex items-center justify-center">
+                  <div class="w-1.5 h-1.5 rounded-full bg-cyber-pink"></div>
+                </div>
+                <div class="p-4 rounded bg-cyber-light/30 border border-cyber-border hover:border-cyber-pink/40 shadow-md backdrop-blur-sm transition-colors duration-300">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-1">
+                    <h4 class="font-orbitron font-bold text-slate-100 text-sm tracking-wide">Engineering Diploma (CSE)</h4>
+                    <span class="text-[9px] font-mono text-cyber-pink uppercase">[ 2020 – 2023 ]</span>
+                  </div>
+                  <div class="text-[10px] text-slate-500 font-mono mb-2">Govt. Polytechnic College Betul (M.P.)</div>
+                  <p class="text-xs text-slate-400 font-mono">Completed core diploma coursework. CGPA: 6.21 / 10.0</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
     </section>
 
     <!-- 3. CYBER ATTACK MAP MONITOR -->
@@ -445,44 +574,54 @@
       </div>
 
       <!-- Skills Matrix Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         
-        <!-- Skill Group 1: Programming -->
-        <div class="p-6 rounded bg-cyber-light/30 border border-cyber-border hover:border-cyber-accent/40 backdrop-blur-cyber hover:translate-y-[-4px] transition-all duration-300 group">
+        <!-- Column 1: Development -->
+        <div class="p-6 rounded bg-cyber-light/30 border border-cyber-border hover:border-cyber-accent/40 backdrop-blur-cyber hover:translate-y-[-4px] transition-colors duration-300 group">
           <div class="flex items-center space-x-3 mb-6">
             <div class="w-10 h-10 rounded bg-cyber-accent/10 border border-cyber-accent/30 flex items-center justify-center text-cyber-accent text-lg">
               <i class="fa-solid fa-code"></i>
             </div>
             <div>
-              <h4 class="font-orbitron font-bold text-slate-100 text-sm tracking-wider">DEVELOPMENT & SCRIPTING</h4>
-              <p class="text-[9px] text-cyber-purple font-mono uppercase tracking-widest">[ AUTOMATION KERNEL ]</p>
+              <h4 class="font-orbitron font-bold text-slate-100 text-sm tracking-wider">DEVELOPMENT</h4>
+              <p class="text-[9px] text-cyber-purple font-mono uppercase tracking-widest">[ FULLSTACK KERNEL ]</p>
             </div>
           </div>
           <div class="space-y-4">
             <!-- Python -->
-            <div class="skill-container" data-skill="Python" data-desc="Automating OSINT tools, scraping data, custom exploits, and writing payload launchers.">
+            <div class="skill-container" data-skill="Python" data-desc="Automating OSINT, scripting custom payloads, automation tools, and local AI hosting.">
               <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
-                <span>Python (Security Automation)</span>
+                <span>Python / Scripting</span>
                 <span class="text-cyber-accent">90%</span>
               </div>
               <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
                 <div class="skill-bar bg-gradient-to-r from-cyber-accent to-cyber-cyan h-full rounded transition-all duration-1000 w-0" data-width="90%"></div>
               </div>
             </div>
-            <!-- HTML/CSS/JS -->
-            <div class="skill-container" data-skill="Web Development" data-desc="Securing web layers, inspecting DOM structures, auditing script injection entrypoints.">
+            <!-- JS/TS -->
+            <div class="skill-container" data-skill="JS/TS" data-desc="Interactive frontend frameworks, logic processing, DOM manipulation, asynchronous interfaces.">
               <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
-                <span>HTML / CSS / JavaScript</span>
+                <span>JavaScript / TypeScript</span>
                 <span class="text-cyber-accent">85%</span>
               </div>
               <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
                 <div class="skill-bar bg-gradient-to-r from-cyber-accent to-cyber-cyan h-full rounded transition-all duration-1000 w-0" data-width="85%"></div>
               </div>
             </div>
-            <!-- PHP/MySQL -->
-            <div class="skill-container" data-skill="Databases" data-desc="Auditing SQL query structures, exploiting SQL Injections (SQLi), and database defense patches.">
+            <!-- React/Next/Tailwind -->
+            <div class="skill-container" data-skill="React & Next.js" data-desc="Building high-fidelity responsive websites, Tailwind configurations, component architectures, and static exports.">
               <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
-                <span>PHP / MySQL</span>
+                <span>React / Next.js / Tailwind</span>
+                <span class="text-cyber-accent">82%</span>
+              </div>
+              <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
+                <div class="skill-bar bg-gradient-to-r from-cyber-accent to-cyber-cyan h-full rounded transition-all duration-1000 w-0" data-width="82%"></div>
+              </div>
+            </div>
+            <!-- Node/FastAPI -->
+            <div class="skill-container" data-skill="Backend APIs" data-desc="Developing secure backends, REST API endpoints using FastAPI and Node.js/Express.">
+              <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                <span>Node.js / Express / FastAPI</span>
                 <span class="text-cyber-accent">80%</span>
               </div>
               <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
@@ -492,91 +631,156 @@
           </div>
         </div>
 
-        <!-- Skill Group 2: Tools -->
-        <div class="p-6 rounded bg-cyber-light/30 border border-cyber-border hover:border-cyber-purple/40 backdrop-blur-cyber hover:translate-y-[-4px] transition-all duration-300 group">
+        <!-- Column 2: Data & DevOps -->
+        <div class="p-6 rounded bg-cyber-light/30 border border-cyber-border hover:border-cyber-purple/40 backdrop-blur-cyber hover:translate-y-[-4px] transition-colors duration-300 group">
           <div class="flex items-center space-x-3 mb-6">
             <div class="w-10 h-10 rounded bg-cyber-purple/10 border border-cyber-purple/30 flex items-center justify-center text-cyber-purple text-lg">
-              <i class="fa-solid fa-shield-halved"></i>
+              <i class="fa-solid fa-cube"></i>
             </div>
             <div>
-              <h4 class="font-orbitron font-bold text-slate-100 text-sm tracking-wider">OFFENSIVE SECURITY TOOLS</h4>
-              <p class="text-[9px] text-cyber-accent font-mono uppercase tracking-widest">[ EXPLOIT & AUDIT ENGINE ]</p>
+              <h4 class="font-orbitron font-bold text-slate-100 text-sm tracking-wider">DATA & DEVOPS</h4>
+              <p class="text-[9px] text-cyber-accent font-mono uppercase tracking-widest">[ DEPLOY & REPO STACK ]</p>
             </div>
           </div>
           <div class="space-y-4">
-            <!-- Nmap & Burp Suite -->
-            <div class="skill-container" data-skill="Nmap & Burp" data-desc="Vulnerability scanning, traffic interception, payload testing, proxy configurations.">
+            <!-- SQL -->
+            <div class="skill-container" data-skill="SQL Databases" data-desc="Structuring relational data, writing secure queries, auditing SQL Injections in MySQL, PostgreSQL, and SQLite.">
               <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
-                <span>Burp Suite / Nmap</span>
-                <span class="text-cyber-purple">88%</span>
+                <span>MySQL / Postgres / SQLite</span>
+                <span class="text-cyber-purple">82%</span>
               </div>
               <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
-                <div class="skill-bar bg-gradient-to-r from-cyber-purple to-cyber-pink h-full rounded transition-all duration-1000 w-0" data-width="88%"></div>
+                <div class="skill-bar bg-gradient-to-r from-cyber-purple to-cyber-pink h-full rounded transition-all duration-1000 w-0" data-width="82%"></div>
               </div>
             </div>
-            <!-- Metasploit & Wireshark -->
-            <div class="skill-container" data-skill="Metasploit & Wireshark" data-desc="Payload delivery, shell interception, network packet analysis, security analysis.">
+            <!-- MongoDB -->
+            <div class="skill-container" data-skill="NoSQL" data-desc="Handling non-relational document databases, collections management, and MongoDB security layers.">
               <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
-                <span>Metasploit / Wireshark</span>
-                <span class="text-cyber-purple">80%</span>
+                <span>MongoDB (NoSQL)</span>
+                <span class="text-cyber-purple">75%</span>
               </div>
               <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
-                <div class="skill-bar bg-gradient-to-r from-cyber-purple to-cyber-pink h-full rounded transition-all duration-1000 w-0" data-width="80%"></div>
+                <div class="skill-bar bg-gradient-to-r from-cyber-purple to-cyber-pink h-full rounded transition-all duration-1000 w-0" data-width="75%"></div>
               </div>
             </div>
-            <!-- Kali Linux -->
-            <div class="skill-container" data-skill="Kali Linux" data-desc="Advanced penetration testing environment, shell scripting, tool compilation.">
+            <!-- Linux -->
+            <div class="skill-container" data-skill="Linux Administration" data-desc="Bash shell scripting, user permissions administration, security hardening in Kali and Debian environments.">
               <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
-                <span>Kali Linux Frameworks</span>
-                <span class="text-cyber-purple">92%</span>
+                <span>Linux OS Administrations</span>
+                <span class="text-cyber-purple">90%</span>
               </div>
               <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
-                <div class="skill-bar bg-gradient-to-r from-cyber-purple to-cyber-pink h-full rounded transition-all duration-1000 w-0" data-width="92%"></div>
+                <div class="skill-bar bg-gradient-to-r from-cyber-purple to-cyber-pink h-full rounded transition-all duration-1000 w-0" data-width="90%"></div>
+              </div>
+            </div>
+            <!-- Docker/Git -->
+            <div class="skill-container" data-skill="DevOps Tools" data-desc="Containerizing app runtimes using Docker, source code versioning in Git, and tracking releases on GitHub.">
+              <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                <span>Git / GitHub / Docker</span>
+                <span class="text-cyber-purple">85%</span>
+              </div>
+              <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
+                <div class="skill-bar bg-gradient-to-r from-cyber-purple to-cyber-pink h-full rounded transition-all duration-1000 w-0" data-width="85%"></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Skill Group 3: Core Methodologies -->
-        <div class="p-6 rounded bg-cyber-light/30 border border-cyber-border hover:border-cyber-accent/40 backdrop-blur-cyber hover:translate-y-[-4px] transition-all duration-300 group">
+        <!-- Column 3: Cyber Security -->
+        <div class="p-6 rounded bg-cyber-light/30 border border-cyber-border hover:border-cyber-cyan/40 backdrop-blur-cyber hover:translate-y-[-4px] transition-colors duration-300 group">
           <div class="flex items-center space-x-3 mb-6">
             <div class="w-10 h-10 rounded bg-cyber-cyan/10 border border-cyber-cyan/30 flex items-center justify-center text-cyber-cyan text-lg">
-              <i class="fa-solid fa-network-wired"></i>
+              <i class="fa-solid fa-shield-halved"></i>
             </div>
             <div>
-              <h4 class="font-orbitron font-bold text-slate-100 text-sm tracking-wider">CYBERSEC METHODOLOGY</h4>
-              <p class="text-[9px] text-cyber-purple font-mono uppercase tracking-widest">[ SECURITY METHOD MODULE ]</p>
+              <h4 class="font-orbitron font-bold text-slate-100 text-sm tracking-wider">CYBER SECURITY</h4>
+              <p class="text-[9px] text-cyber-purple font-mono uppercase tracking-widest">[ EXPLOIT & PEN-TEST ]</p>
             </div>
           </div>
           <div class="space-y-4">
-            <!-- Pen Testing & Vuln Scan -->
-            <div class="skill-container" data-skill="Pentesting" data-desc="Applying OWASP standards to audit web assets and system ports, generating mitigation reports.">
+            <!-- Nmap/Burp -->
+            <div class="skill-container" data-skill="Recon scan" data-desc="Intercepting HTTP/S proxies using Burp Suite, mapping active ports and firewall banners using Nmap.">
               <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
-                <span>Penetration Testing / VulnScan</span>
+                <span>Burp Suite / Nmap</span>
+                <span class="text-cyber-cyan">88%</span>
+              </div>
+              <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
+                <div class="skill-bar bg-gradient-to-r from-cyber-cyan to-cyber-accent h-full rounded transition-all duration-1000 w-0" data-width="88%"></div>
+              </div>
+            </div>
+            <!-- Metasploit/Wireshark -->
+            <div class="skill-container" data-skill="Exploit Frameworks" data-desc="Network packet analysis in Wireshark, launching exploits and managing listeners in Metasploit.">
+              <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                <span>Metasploit / Wireshark</span>
+                <span class="text-cyber-cyan">82%</span>
+              </div>
+              <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
+                <div class="skill-bar bg-gradient-to-r from-cyber-cyan to-cyber-accent h-full rounded transition-all duration-1000 w-0" data-width="82%"></div>
+              </div>
+            </div>
+            <!-- SQLMap/Hydra/John -->
+            <div class="skill-container" data-skill="Exploits Suite" data-desc="Automating database exploits in SQLMap, password cracking with John the Ripper and hydra credential cracking.">
+              <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                <span>SQLMap / Hydra / John</span>
+                <span class="text-cyber-cyan">80%</span>
+              </div>
+              <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
+                <div class="skill-bar bg-gradient-to-r from-cyber-cyan to-cyber-accent h-full rounded transition-all duration-1000 w-0" data-width="80%"></div>
+              </div>
+            </div>
+            <!-- Gobuster/Hydra -->
+            <div class="skill-container" data-skill="Directory Audits" data-desc="Brute forcing hidden URLs and assets using Gobuster, discovering attack endpoints.">
+              <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                <span>Gobuster / Web Fuzzing</span>
                 <span class="text-cyber-cyan">85%</span>
               </div>
               <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
                 <div class="skill-bar bg-gradient-to-r from-cyber-cyan to-cyber-accent h-full rounded transition-all duration-1000 w-0" data-width="85%"></div>
               </div>
             </div>
-            <!-- OSINT & Reconnaissance -->
-            <div class="skill-container" data-skill="OSINT" data-desc="Footprinting targets, mapping attack surfaces, searching subdomains, harvesting meta-data.">
+          </div>
+        </div>
+
+        <!-- Column 4: Networking & AI -->
+        <div class="p-6 rounded bg-cyber-light/30 border border-cyber-border hover:border-cyber-pink/40 backdrop-blur-cyber hover:translate-y-[-4px] transition-colors duration-300 group">
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-10 h-10 rounded bg-cyber-pink/10 border border-cyber-pink/30 flex items-center justify-center text-cyber-pink text-lg">
+              <i class="fa-solid fa-network-wired"></i>
+            </div>
+            <div>
+              <h4 class="font-orbitron font-bold text-slate-100 text-sm tracking-wider">NETWORKING & AI</h4>
+              <p class="text-[9px] text-cyber-purple font-mono uppercase tracking-widest">[ SECURITY SYSTEMS ]</p>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <!-- Networking Protocols -->
+            <div class="skill-container" data-skill="Network Security" data-desc="Auditing network structures, TCP/IP headers, routing setups, DNS configurations, CCNA modules.">
               <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
-                <span>OSINT & Reconnaissance</span>
-                <span class="text-cyber-cyan">90%</span>
+                <span>Network Security / CCNA</span>
+                <span class="text-cyber-pink">80%</span>
               </div>
               <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
-                <div class="skill-bar bg-gradient-to-r from-cyber-cyan to-cyber-accent h-full rounded transition-all duration-1000 w-0" data-width="90%"></div>
+                <div class="skill-bar bg-gradient-to-r from-cyber-pink to-cyber-accent h-full rounded transition-all duration-1000 w-0" data-width="80%"></div>
               </div>
             </div>
-            <!-- Networking Protocols -->
-            <div class="skill-container" data-skill="Networking" data-desc="TCP/IP, Routing, Subnetting, SSL/TLS, DNS, Firewall ACLs configuration and auditing.">
+            <!-- Machine Learning -->
+            <div class="skill-container" data-skill="AI & Machine Learning" data-desc="Applying python models, local LLM configurations (llama.cpp/Qwen), and machine learning regression systems.">
               <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
-                <span>CCNA / Networking Security</span>
-                <span class="text-cyber-cyan">78%</span>
+                <span>AI & Machine Learning</span>
+                <span class="text-cyber-pink">75%</span>
               </div>
               <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
-                <div class="skill-bar bg-gradient-to-r from-cyber-cyan to-cyber-accent h-full rounded transition-all duration-1000 w-0" data-width="78%"></div>
+                <div class="skill-bar bg-gradient-to-r from-cyber-pink to-cyber-accent h-full rounded transition-all duration-1000 w-0" data-width="75%"></div>
+              </div>
+            </div>
+            <!-- API Security -->
+            <div class="skill-container" data-skill="API Auditing" data-desc="Securing interface sockets, parsing JSON web tokens, verifying REST header encryption parameters.">
+              <div class="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                <span>API Security Audits</span>
+                <span class="text-cyber-pink">82%</span>
+              </div>
+              <div class="w-full bg-cyber-black h-2 rounded overflow-hidden">
+                <div class="skill-bar bg-gradient-to-r from-cyber-pink to-cyber-accent h-full rounded transition-all duration-1000 w-0" data-width="82%"></div>
               </div>
             </div>
           </div>
@@ -591,7 +795,108 @@
 
     </section>
 
-    <!-- 4. EXPERIENCE SECTION -->
+    <!-- 4. CYBER SECURITY OPERATIONS SECTION -->
+    <section id="cybersecurity-ops" class="py-20 border-t border-cyber-border/40 scroll-mt-20 scroll-reveal-item">
+      
+      <!-- Section Title -->
+      <div class="mb-12 text-center lg:text-left">
+        <h3 class="text-xs font-bold font-orbitron text-cyber-accent tracking-[0.4em] uppercase mb-2">// INTEL DEFENSE SUB-SYSTEM</h3>
+        <h2 class="text-3xl font-black font-orbitron text-slate-100 flex items-center justify-center lg:justify-start">
+          CYBER SECURITY CORE OPERATIONS <span class="text-cyber-purple ml-2 animate-pulse">_</span>
+        </h2>
+      </div>
+
+      <!-- Ops Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Red Team Card -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-cyber flex flex-col justify-between h-96 transition-colors duration-300 group hover-tilt">
+          <div>
+            <div class="flex justify-between items-center mb-6">
+              <span class="text-[9px] font-mono text-cyber-accent tracking-widest">[ CODE_RED // OFFENSIVE ]</span>
+              <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+            </div>
+            
+            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">RED TEAM / OFFENSIVE</h4>
+            <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
+              Active exploit development, vulnerability research, and full-scale penetration testing simulated attacks to audit client cyber infrastructure.
+            </p>
+            
+            <!-- Focus list -->
+            <ul class="space-y-1.5 font-mono text-[10px] text-slate-400">
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-accent mr-2 text-[8px]"></i> Penetration Testing (Web & API)</li>
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-accent mr-2 text-[8px]"></i> OSINT Surface Mapping</li>
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-accent mr-2 text-[8px]"></i> Custom Payload Compilation</li>
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-accent mr-2 text-[8px]"></i> Bug Bounty Hunter Audits</li>
+            </ul>
+          </div>
+          
+          <div class="pt-4 border-t border-cyber-border/60 flex justify-between items-center font-mono text-[10px] text-slate-500">
+            <span>TACTICAL MODULE</span>
+            <span class="text-cyber-accent font-bold">[ READY_TO_DEPLOY ]</span>
+          </div>
+        </div>
+
+        <!-- Blue Team Card -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-purple shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-cyber flex flex-col justify-between h-96 transition-colors duration-300 group hover-tilt">
+          <div>
+            <div class="flex justify-between items-center mb-6">
+              <span class="text-[9px] font-mono text-cyber-purple tracking-widest">[ CODE_BLUE // DEFENSIVE ]</span>
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
+            </div>
+            
+            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">BLUE TEAM / DEFENSIVE</h4>
+            <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
+              Monitoring active network vectors, managing firewall configs, scanning security alerts, and deploying cloud defenses.
+            </p>
+            
+            <!-- Focus list -->
+            <ul class="space-y-1.5 font-mono text-[10px] text-slate-400">
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-purple mr-2 text-[8px]"></i> SOC Operations Monitoring</li>
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-purple mr-2 text-[8px]"></i> Cloud Infrastructure Hardening</li>
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-purple mr-2 text-[8px]"></i> Threat Risk Analysis & SIEM</li>
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-purple mr-2 text-[8px]"></i> Network Traffic Audits</li>
+            </ul>
+          </div>
+          
+          <div class="pt-4 border-t border-cyber-border/60 flex justify-between items-center font-mono text-[10px] text-slate-500">
+            <span>TACTICAL MODULE</span>
+            <span class="text-cyber-purple font-bold">[ SHIELD_ACTIVE ]</span>
+          </div>
+        </div>
+
+        <!-- Purple Team / Forensics Card -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-pink shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-cyber flex flex-col justify-between h-96 transition-colors duration-300 group hover-tilt">
+          <div>
+            <div class="flex justify-between items-center mb-6">
+              <span class="text-[9px] font-mono text-cyber-pink tracking-widest">[ CODE_PURPLE // RESPONSE ]</span>
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-600 animate-pulse"></span>
+            </div>
+            
+            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">PURPLE & FORENSICS</h4>
+            <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
+              Bridging the gap between offensive exploits and defensive alerts, performing file digital forensics, and incident analysis reports.
+            </p>
+            
+            <!-- Focus list -->
+            <ul class="space-y-1.5 font-mono text-[10px] text-slate-400">
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-pink mr-2 text-[8px]"></i> Digital Forensics Analysis</li>
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-pink mr-2 text-[8px]"></i> Incident Response Handshakes</li>
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-pink mr-2 text-[8px]"></i> Security Posture Auditing</li>
+              <li class="flex items-center"><i class="fa-solid fa-angles-right text-cyber-pink mr-2 text-[8px]"></i> Collaborative Threat Drills</li>
+            </ul>
+          </div>
+          
+          <div class="pt-4 border-t border-cyber-border/60 flex justify-between items-center font-mono text-[10px] text-slate-500">
+            <span>TACTICAL MODULE</span>
+            <span class="text-cyber-pink font-bold">[ ANALYZING_SYSTEMS ]</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5. EXPERIENCE SECTION -->
     <section id="experience" class="py-20 border-t border-cyber-border/40 scroll-mt-20">
       
       <!-- Section Title -->
@@ -894,6 +1199,233 @@
       </div>
     </section>
 
+    <!-- 5.5. SERVICES SECTION -->
+    <section id="services" class="py-20 border-t border-cyber-border/40 scroll-mt-20 scroll-reveal-item">
+      
+      <!-- Section Title -->
+      <div class="mb-12 text-center lg:text-left">
+        <h3 class="text-xs font-bold font-orbitron text-cyber-cyan tracking-[0.4em] uppercase mb-2">// CAPABILITIES PORTAL</h3>
+        <h2 class="text-3xl font-black font-orbitron text-slate-100 flex items-center justify-center lg:justify-start">
+          CORE SERVICES & SOLUTIONS <span class="text-cyber-purple ml-2 animate-pulse">_</span>
+        </h2>
+      </div>
+
+      <!-- Services Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Service 1: Penetration Testing -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent shadow-[0_0_15px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between h-80 transition-colors duration-300 hover-tilt group">
+          <div class="space-y-4">
+            <div class="text-cyber-accent text-3xl group-hover:scale-110 transition-transform origin-left">
+              <i class="fa-solid fa-crosshairs"></i>
+            </div>
+            <div>
+              <h4 class="font-orbitron font-bold text-slate-100 text-base tracking-wider">PENETRATION TESTING</h4>
+              <p class="text-[9px] text-cyber-purple font-mono uppercase tracking-widest mt-1">[ OFFENSIVE SECURITY ]</p>
+              <p class="text-xs text-slate-400 font-mono mt-3 leading-relaxed">
+                Full-scope testing of web apps, REST APIs, and networks using CEH v12 standards to locate active security gaps.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-cyber-border/60 flex justify-between items-center font-mono text-[9px] text-slate-500">
+            <span>AUDIT TYPE: BLACK-BOX</span>
+            <span class="text-cyber-accent font-bold">[ ASSIGN_OP ]</span>
+          </div>
+        </div>
+
+        <!-- Service 2: Security Auditing -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-purple shadow-[0_0_15px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between h-80 transition-colors duration-300 hover-tilt group">
+          <div class="space-y-4">
+            <div class="text-cyber-purple text-3xl group-hover:scale-110 transition-transform origin-left">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+              <h4 class="font-orbitron font-bold text-slate-100 text-base tracking-wider">SECURITY AUDITING</h4>
+              <p class="text-[9px] text-cyber-accent font-mono uppercase tracking-widest mt-1">[ VULNERABILITY ANALYSIS ]</p>
+              <p class="text-xs text-slate-400 font-mono mt-3 leading-relaxed">
+                Analyzing configurations, ports, and databases against standard vulnerabilities to prepare security remediation docs.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-cyber-border/60 flex justify-between items-center font-mono text-[9px] text-slate-500">
+            <span>COMPLIANCE: OWASP Top 10</span>
+            <span class="text-cyber-purple font-bold">[ DISCOVER_RISK ]</span>
+          </div>
+        </div>
+
+        <!-- Service 3: AI Development -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-pink shadow-[0_0_15px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between h-80 transition-colors duration-300 hover-tilt group">
+          <div class="space-y-4">
+            <div class="text-cyber-pink text-3xl group-hover:scale-110 transition-transform origin-left">
+              <i class="fa-solid fa-microchip"></i>
+            </div>
+            <div>
+              <h4 class="font-orbitron font-bold text-slate-100 text-base tracking-wider">AI DEVELOPMENT</h4>
+              <p class="text-[9px] text-cyber-purple font-mono uppercase tracking-widest mt-1">[ INTELLIGENT AGENTS ]</p>
+              <p class="text-xs text-slate-400 font-mono mt-3 leading-relaxed">
+                Configuring local LLM servers, setting up cognitive pipelines, and building AI tools to automate complex workflows.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-cyber-border/60 flex justify-between items-center font-mono text-[9px] text-slate-500">
+            <span>FRAMEWORK: LlamaCPP / OpenAI</span>
+            <span class="text-cyber-pink font-bold">[ INIT_AGENT ]</span>
+          </div>
+        </div>
+
+        <!-- Service 4: Python Scripting -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-cyan shadow-[0_0_15px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between h-80 transition-colors duration-300 hover-tilt group">
+          <div class="space-y-4">
+            <div class="text-cyber-cyan text-3xl group-hover:scale-110 transition-transform origin-left">
+              <i class="fa-brands fa-python"></i>
+            </div>
+            <div>
+              <h4 class="font-orbitron font-bold text-slate-100 text-base tracking-wider">PYTHON SCRIPTING</h4>
+              <p class="text-[9px] text-cyber-purple font-mono uppercase tracking-widest mt-1">[ AUTOMATION ENGINE ]</p>
+              <p class="text-xs text-slate-400 font-mono mt-3 leading-relaxed">
+                Developing custom CLI scripts, OSINT parsers, automated file parsers, and custom socket listeners.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-cyber-border/60 flex justify-between items-center font-mono text-[9px] text-slate-500">
+            <span>COMPLEXITY: O(1) / O(N)</span>
+            <span class="text-cyber-cyan font-bold">[ RUN_SCRIPT ]</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5.8. INTERACTIVE HACKER TOOLKIT SECTION -->
+    <section id="hacker-toolkit" class="py-20 border-t border-cyber-border/40 scroll-mt-20 scroll-reveal-item">
+      
+      <!-- Section Title -->
+      <div class="mb-12 text-center lg:text-left">
+        <h3 class="text-xs font-bold font-orbitron text-cyber-purple tracking-[0.4em] uppercase mb-2">// SECURITY LAB EQUIPMENT</h3>
+        <h2 class="text-3xl font-black font-orbitron text-slate-100 flex items-center justify-center lg:justify-start">
+          INTERACTIVE HACKING TOOLS GRID <span class="text-cyber-accent ml-2 animate-pulse">_</span>
+        </h2>
+      </div>
+
+      <!-- Tools Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-6">
+        
+        <!-- Tool 1: Nmap -->
+        <button class="tool-hud-btn p-4 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent text-center transition-all duration-200 group flex flex-col items-center justify-center h-24 hover-sound" 
+          data-tool="Nmap" 
+          data-type="Network Mapper"
+          data-syntax="nmap -sS -sV -O -p- 192.168.1.1"
+          data-desc="Used for target discovery and vulnerability scanner audits on active TCP/UDP ports.">
+          <i class="fa-solid fa-radar text-2xl text-cyber-accent group-hover:scale-110 transition-transform mb-2"></i>
+          <span class="font-orbitron font-bold text-[10px] tracking-widest text-slate-300">NMAP</span>
+        </button>
+
+        <!-- Tool 2: Burp Suite -->
+        <button class="tool-hud-btn p-4 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-purple text-center transition-all duration-200 group flex flex-col items-center justify-center h-24 hover-sound" 
+          data-tool="Burp Suite" 
+          data-type="Web Proxy & Scanner"
+          data-syntax="burpsuite --project secure-audit.sdb"
+          data-desc="Intercepting and altering HTTP/S packets between user browser agents and web servers.">
+          <i class="fa-solid fa-user-secret text-2xl text-cyber-purple group-hover:scale-110 transition-transform mb-2"></i>
+          <span class="font-orbitron font-bold text-[10px] tracking-widest text-slate-300">BURP</span>
+        </button>
+
+        <!-- Tool 3: Metasploit -->
+        <button class="tool-hud-btn p-4 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-pink text-center transition-all duration-200 group flex flex-col items-center justify-center h-24 hover-sound" 
+          data-tool="Metasploit" 
+          data-type="Exploit Framework"
+          data-syntax="msfconsole -q -x 'use exploit/multi/handler'"
+          data-desc="Standard penetration testing platform to verify vulnerability exploits and handle active shells.">
+          <i class="fa-solid fa-skull-crossbones text-2xl text-cyber-pink group-hover:scale-110 transition-transform mb-2"></i>
+          <span class="font-orbitron font-bold text-[10px] tracking-widest text-slate-300">METASPLOIT</span>
+        </button>
+
+        <!-- Tool 4: Wireshark -->
+        <button class="tool-hud-btn p-4 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-cyan text-center transition-all duration-200 group flex flex-col items-center justify-center h-24 hover-sound" 
+          data-tool="Wireshark" 
+          data-type="Packet Inspector"
+          data-syntax="tshark -i eth0 -f 'tcp port 443'"
+          data-desc="Analyzing raw packets to map traffic patterns and locate plain-text authentication tokens.">
+          <i class="fa-solid fa-network-wired text-2xl text-cyber-cyan group-hover:scale-110 transition-transform mb-2"></i>
+          <span class="font-orbitron font-bold text-[10px] tracking-widest text-slate-300">WIRESHARK</span>
+        </button>
+
+        <!-- Tool 5: Sqlmap -->
+        <button class="tool-hud-btn p-4 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent text-center transition-all duration-200 group flex flex-col items-center justify-center h-24 hover-sound" 
+          data-tool="Sqlmap" 
+          data-type="SQL Injection Automator"
+          data-syntax="sqlmap -u 'http://target.xyz/item.php?id=1' --dbs"
+          data-desc="Automating database breaches by exploiting input parameters vulnerable to SQL injection.">
+          <i class="fa-solid fa-database text-2xl text-cyber-accent group-hover:scale-110 transition-transform mb-2"></i>
+          <span class="font-orbitron font-bold text-[10px] tracking-widest text-slate-300">SQLMAP</span>
+        </button>
+
+        <!-- Tool 6: Hydra -->
+        <button class="tool-hud-btn p-4 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-purple text-center transition-all duration-200 group flex flex-col items-center justify-center h-24 hover-sound" 
+          data-tool="Hydra" 
+          data-type="Credentials Cracker"
+          data-syntax="hydra -l admin -P wordlist.txt 192.168.1.1 ssh"
+          data-desc="Fast parallelized brute-forcer targeting login interfaces (SSH, FTP, HTTP-POST).">
+          <i class="fa-solid fa-unlock text-2xl text-cyber-purple group-hover:scale-110 transition-transform mb-2"></i>
+          <span class="font-orbitron font-bold text-[10px] tracking-widest text-slate-300">HYDRA</span>
+        </button>
+
+        <!-- Tool 7: John the Ripper -->
+        <button class="tool-hud-btn p-4 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-pink text-center transition-all duration-200 group flex flex-col items-center justify-center h-24 hover-sound" 
+          data-tool="John the Ripper" 
+          data-type="Offline Password Hash Cracker"
+          data-syntax="john --format=sha256 hash.txt --wordlist=rockyou.txt"
+          data-desc="Performing dictionary attacks on encrypted hash files to retrieve plaintext logs.">
+          <i class="fa-solid fa-key text-2xl text-cyber-pink group-hover:scale-110 transition-transform mb-2"></i>
+          <span class="font-orbitron font-bold text-[10px] tracking-widest text-slate-300">JOHN</span>
+        </button>
+
+        <!-- Tool 8: Gobuster -->
+        <button class="tool-hud-btn p-4 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-cyan text-center transition-all duration-200 group flex flex-col items-center justify-center h-24 hover-sound" 
+          data-tool="Gobuster" 
+          data-type="Directory Fuzzer"
+          data-syntax="gobuster dir -u http://target.xyz -w dir_list.txt"
+          data-desc="Auditing servers to locate hidden files, folders, API parameters, and admin portals.">
+          <i class="fa-solid fa-folder-open text-2xl text-cyber-cyan group-hover:scale-110 transition-transform mb-2"></i>
+          <span class="font-orbitron font-bold text-[10px] tracking-widest text-slate-300">GOBUSTER</span>
+        </button>
+
+      </div>
+
+      <!-- Toolkit Detail HUD screen -->
+      <div class="p-6 rounded bg-cyber-gray border border-cyber-border/80 shadow-[0_0_20px_rgba(0,0,0,0.5)] font-mono text-xs">
+        <div class="flex justify-between items-center mb-4 pb-2 border-b border-cyber-border/60">
+          <span class="text-cyber-accent font-bold font-orbitron text-xs">// TOOL MONITOR UPLINK</span>
+          <span class="text-slate-500 text-[10px]" id="tool-status">[ IDLE_STANDBY ]</span>
+        </div>
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <span class="text-slate-500 block">TOOL NAME:</span>
+              <span class="text-slate-100 font-bold font-orbitron" id="hud-tool-name">Nmap</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block">CLASSIFICATION:</span>
+              <span class="text-cyber-purple font-semibold" id="hud-tool-type">Network Mapper</span>
+            </div>
+            <div>
+              <span class="text-slate-500 block">TARGET ACCESS PORTAL:</span>
+              <span class="text-cyber-pink font-semibold">[ ETH_LOCAL_PORT ]</span>
+            </div>
+          </div>
+          <div>
+            <span class="text-slate-500 block mb-1">COMMAND SYNTAX:</span>
+            <pre class="p-3 bg-cyber-black rounded border border-cyber-border text-cyber-accent font-mono text-[11px] overflow-x-auto" id="hud-tool-syntax">nmap -sS -sV -O -p- 192.168.1.1</pre>
+          </div>
+          <div>
+            <span class="text-slate-500 block mb-1">FUNCTIONAL DESCRIPTION:</span>
+            <p class="text-slate-300 text-xs" id="hud-tool-desc">Used for target discovery and vulnerability scanner audits on active TCP/UDP ports.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
     <!-- 6. PROJECTS SECTION (Hacker Simulators) -->
     <section id="projects" class="py-20 border-t border-cyber-border/40 scroll-mt-20">
       
@@ -908,85 +1440,32 @@
       <!-- Projects Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         
-        <!-- Project 1: DarknetEye -->
-        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
-          
-          <!-- Cyber HUD Background scan line -->
-          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-accent/40 animate-pulse"></div>
-
-          <div>
-            <div class="flex justify-between items-center mb-4">
-              <span class="text-[10px] font-mono text-cyber-accent tracking-widest">[ PROJ_01 // ACTIVE // 2025 ]</span>
-              <div class="flex space-x-2 text-slate-400 text-xs">
-                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Python</span>
-                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Bash</span>
-                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Network Protocols</span>
-              </div>
-            </div>
-            
-            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">DarknetEye Tool</h4>
-            <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
-              Developed a specialized security automation tool designed for OSINT and footprinting.
-            </p>
-          </div>
-
-          <div class="space-y-4">
-            <!-- Simulated Interface Placeholder -->
-            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-accent/60 relative overflow-hidden group-hover:border-cyber-accent/40 transition-colors">
-              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ SIMULATOR_STANDBY ]</div>
-              <div class="text-center group-hover:scale-105 transition-transform duration-300">
-                <i class="fa-solid fa-eye text-2xl mb-1 block animate-pulse"></i>
-                <span>CLICK 'LAUNCH SYSTEM' FOR CLI</span>
-              </div>
-              <div class="absolute -right-12 -bottom-12 w-24 h-24 border border-dashed border-cyber-accent/10 rounded-full animate-spin-slow pointer-events-none"></div>
-            </div>
-
-            <!-- Action buttons -->
-            <div class="flex justify-between gap-3 pt-2">
-              <button class="flex-1 py-2.5 bg-cyber-accent/10 hover:bg-cyber-accent/30 border border-cyber-accent text-cyber-accent font-orbitron font-bold text-[10px] tracking-widest rounded transition-all shadow-[0_0_15px_rgba(0,245,255,0.1)] hover:shadow-[0_0_20px_rgba(0,245,255,0.3)] launch-sim-btn" data-project="darkneteye">
-                <i class="fa-solid fa-terminal mr-1"></i> LAUNCH SYSTEM
-              </button>
-              <a href="https://github.com/Bhushan-narware" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
-                <i class="fa-brands fa-github text-sm"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Project 2: PassGenX -->
+        <!-- Project 1: PassGenX -->
         <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-purple/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
-          
-          <!-- Cyber HUD Background scan line -->
           <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-purple/40 animate-pulse"></div>
-
           <div>
             <div class="flex justify-between items-center mb-4">
-              <span class="text-[10px] font-mono text-cyber-purple tracking-widest">[ PROJ_02 // DEPLOYED // 2025 ]</span>
+              <span class="text-[10px] font-mono text-cyber-purple tracking-widest">[ PROJ_01 // ACTIVE // 2025 ]</span>
               <div class="flex space-x-2 text-slate-400 text-xs">
                 <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Python</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Tkinter</span>
               </div>
             </div>
-            
             <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">PassGenX</h4>
             <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
-              Built a secure, customizable password generation tool to enhance credential security management.
+              Built a secure, customizable desktop password generation utility with custom character weights and entropy analysis to ensure credential security.
             </p>
           </div>
-
           <div class="space-y-4">
-            <!-- Simulated Interface Placeholder -->
             <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-purple/60 relative overflow-hidden group-hover:border-cyber-purple/40 transition-colors">
-              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ SIMULATOR_STANDBY ]</div>
+              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ PASSGENX_VAULT ]</div>
               <div class="text-center group-hover:scale-105 transition-transform duration-300">
                 <i class="fa-solid fa-key text-2xl mb-1 block animate-pulse"></i>
-                <span>CLICK 'LAUNCH SYSTEM' FOR CLI</span>
+                <span>CRYPTOGRAPHIC ENTROPY KERNEL</span>
               </div>
-              <div class="absolute -right-12 -bottom-12 w-24 h-24 border border-dashed border-cyber-purple/10 rounded-full animate-spin-slow pointer-events-none"></div>
             </div>
-
-            <!-- Action buttons -->
             <div class="flex justify-between gap-3 pt-2">
-              <button class="flex-1 py-2.5 bg-cyber-purple/10 hover:bg-cyber-purple/30 border border-cyber-purple text-cyber-purple font-orbitron font-bold text-[10px] tracking-widest rounded transition-all shadow-[0_0_15px_rgba(138,43,226,0.1)] hover:shadow-[0_0_20px_rgba(138,43,226,0.3)] launch-sim-btn" data-project="passgenx">
+              <button class="flex-1 py-2.5 bg-cyber-purple/10 hover:bg-cyber-purple/30 border border-cyber-purple text-cyber-purple font-orbitron font-bold text-[10px] tracking-widest rounded transition-all launch-sim-btn" data-project="passgenx">
                 <i class="fa-solid fa-terminal mr-1"></i> LAUNCH SYSTEM
               </button>
               <a href="https://github.com/Bhushan-narware/passGenx.git" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
@@ -996,83 +1475,32 @@
           </div>
         </div>
 
-        <!-- Project 3: IPTracker -->
-        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-pink/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
-          
-          <!-- Cyber HUD Background scan line -->
-          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-pink/40 animate-pulse"></div>
-
+        <!-- Project 2: VishAI -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-accent/40 animate-pulse"></div>
           <div>
             <div class="flex justify-between items-center mb-4">
-              <span class="text-[10px] font-mono text-cyber-pink tracking-widest">[ PROJ_03 // ACTIVE // 2025 ]</span>
+              <span class="text-[10px] font-mono text-cyber-accent tracking-widest">[ PROJ_02 // DEPLOYED // 2026 ]</span>
               <div class="flex space-x-2 text-slate-400 text-xs">
-                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Python</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">NextJS</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">OpenAI</span>
               </div>
             </div>
-            
-            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">IPTracker</h4>
+            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">VishAI Chatbot</h4>
             <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
-              Engineered an IP tracking tool designed for reconnaissance and geolocating targets during penetration testing phases.
+              Designed a cognitive AI chat interface that leverages local contextual parameters to provide responsive system configuration suggestions.
             </p>
           </div>
-
           <div class="space-y-4">
-            <!-- Simulated Interface Placeholder -->
-            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-pink/60 relative overflow-hidden group-hover:border-cyber-pink/40 transition-colors">
-              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ SIMULATOR_STANDBY ]</div>
+            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-accent/60 relative overflow-hidden group-hover:border-cyber-accent/40 transition-colors">
+              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ VISHAI_COGNITIVE ]</div>
               <div class="text-center group-hover:scale-105 transition-transform duration-300">
-                <i class="fa-solid fa-map-location-dot text-2xl mb-1 block animate-pulse"></i>
-                <span>CLICK 'LAUNCH SYSTEM' FOR CLI</span>
+                <i class="fa-solid fa-robot text-2xl mb-1 block animate-pulse"></i>
+                <span>COGNITIVE CHAT UPLINK</span>
               </div>
-              <div class="absolute -right-12 -bottom-12 w-24 h-24 border border-dashed border-cyber-pink/10 rounded-full animate-spin-slow pointer-events-none"></div>
             </div>
-
-            <!-- Action buttons -->
             <div class="flex justify-between gap-3 pt-2">
-              <button class="flex-1 py-2.5 bg-cyber-pink/10 hover:bg-cyber-pink/30 border border-cyber-pink text-cyber-pink font-orbitron font-bold text-[10px] tracking-widest rounded transition-all shadow-[0_0_15px_rgba(255,0,127,0.1)] hover:shadow-[0_0_20px_rgba(255,0,127,0.3)] launch-sim-btn" data-project="iptracker">
-                <i class="fa-solid fa-terminal mr-1"></i> LAUNCH SYSTEM
-              </button>
-              <a href="https://github.com/Bhushan-narware/iptracker.git" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
-                <i class="fa-brands fa-github text-sm"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Project 4: Local AI Environment -->
-        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-cyan/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
-          
-          <!-- Cyber HUD Background scan line -->
-          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-cyan/40 animate-pulse"></div>
-
-          <div>
-            <div class="flex justify-between items-center mb-4">
-              <span class="text-[10px] font-mono text-cyber-cyan tracking-widest">[ PROJ_04 // HOSTED // 2026 ]</span>
-              <div class="flex space-x-2 text-slate-400 text-xs">
-                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Local LLM Server</span>
-              </div>
-            </div>
-            
-            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">Local AI Environment</h4>
-            <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
-              Successfully configured and hosted the Qwen3 (8B) model locally using llama.cpp entirely from a portable 8GB pen drive, showcasing optimization of large language models on minimal hardware footprints for enhanced data privacy.
-            </p>
-          </div>
-
-          <div class="space-y-4">
-            <!-- Simulated Interface Placeholder -->
-            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-cyan/60 relative overflow-hidden group-hover:border-cyber-cyan/40 transition-colors">
-              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ SIMULATOR_STANDBY ]</div>
-              <div class="text-center group-hover:scale-105 transition-transform duration-300">
-                <i class="fa-solid fa-microchip text-2xl mb-1 block animate-pulse"></i>
-                <span>CLICK 'LAUNCH SYSTEM' FOR CLI</span>
-              </div>
-              <div class="absolute -right-12 -bottom-12 w-24 h-24 border border-dashed border-cyber-cyan/10 rounded-full animate-spin-slow pointer-events-none"></div>
-            </div>
-
-            <!-- Action buttons -->
-            <div class="flex justify-between gap-3 pt-2">
-              <button class="flex-1 py-2.5 bg-cyber-cyan/10 hover:bg-cyber-cyan/30 border border-cyber-cyan text-cyber-cyan font-orbitron font-bold text-[10px] tracking-widest rounded transition-all shadow-[0_0_15px_rgba(0,255,255,0.1)] hover:shadow-[0_0_20px_rgba(0,255,255,0.3)] launch-sim-btn" data-project="localai">
+              <button class="flex-1 py-2.5 bg-cyber-accent/10 hover:bg-cyber-accent/30 border border-cyber-accent text-cyber-accent font-orbitron font-bold text-[10px] tracking-widest rounded transition-all launch-sim-btn" data-project="vishai">
                 <i class="fa-solid fa-terminal mr-1"></i> LAUNCH SYSTEM
               </button>
               <a href="https://github.com/Bhushan-narware" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
@@ -1082,44 +1510,212 @@
           </div>
         </div>
 
-        <!-- Project 5: Interactive Dark Web Simulator -->
-        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden scroll-reveal-item">
-          
-          <!-- Cyber HUD Background scan line -->
-          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-accent/40 animate-pulse"></div>
-
+        <!-- Project 3: Cyber Portfolio -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-cyan/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-cyan/40 animate-pulse"></div>
           <div>
             <div class="flex justify-between items-center mb-4">
-              <span class="text-[10px] font-mono text-cyber-accent tracking-widest">[ PROJ_05 // SECURE // 2026 ]</span>
+              <span class="text-[10px] font-mono text-cyber-cyan tracking-widest">[ PROJ_03 // ACTIVE // 2026 ]</span>
               <div class="flex space-x-2 text-slate-400 text-xs">
-                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">HTML5/JS</span>
-                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Web Audio API</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Vite</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Tailwind</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">GSAP</span>
               </div>
             </div>
-            
-            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">Dark Web Simulator</h4>
+            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">Cyber Portfolio</h4>
             <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
-              An immersive, simulated dark web sandbox featuring real-time node routing logs, secure checkout flows, system diagnostics gauges, and a firewall breach decryption game.
+              This exact retro-futuristic HUD portfolio system featuring 3D particle backgrounds, CRT overlay matrix sweepers, and integrated terminal mini-games.
             </p>
           </div>
-
           <div class="space-y-4">
-            <!-- Simulated Interface Placeholder -->
-            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-accent/60 relative overflow-hidden group-hover:border-cyber-accent/40 transition-colors">
-              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ SIMULATOR_STANDBY ]</div>
+            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-cyan/60 relative overflow-hidden group-hover:border-cyber-cyan/40 transition-colors">
+              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ HUD_PORTFOLIO_SYS ]</div>
               <div class="text-center group-hover:scale-105 transition-transform duration-300">
-                <i class="fa-solid fa-mask text-2xl mb-1 block animate-pulse"></i>
-                <span>CLICK 'OPEN PORTAL' TO START</span>
+                <i class="fa-solid fa-gauge-high text-2xl mb-1 block animate-pulse"></i>
+                <span>TACTICAL CORE RENDERING</span>
               </div>
-              <div class="absolute -right-12 -bottom-12 w-24 h-24 border border-dashed border-cyber-accent/10 rounded-full animate-spin-slow pointer-events-none"></div>
             </div>
-
-            <!-- Action buttons -->
             <div class="flex justify-between gap-3 pt-2">
-              <button id="open-darkweb-portal-btn" class="flex-1 py-2.5 bg-cyber-accent/10 hover:bg-cyber-accent/30 border border-cyber-accent text-cyber-accent font-orbitron font-bold text-[10px] tracking-widest rounded transition-all shadow-[0_0_15px_rgba(0,245,255,0.1)] hover:shadow-[0_0_20px_rgba(0,245,255,0.3)] hover-sound">
-                <i class="fa-solid fa-door-open mr-1"></i> OPEN PORTAL
+              <button class="flex-1 py-2.5 bg-cyber-cyan/10 hover:bg-cyber-cyan/30 border border-cyber-cyan text-cyber-cyan font-orbitron font-bold text-[10px] tracking-widest rounded transition-all launch-sim-btn" data-project="portfolio">
+                <i class="fa-solid fa-terminal mr-1"></i> LAUNCH SYSTEM
               </button>
-              <a href="https://github.com/Bhushan-narware/dark-web-simulator" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
+              <a href="https://github.com/Bhushan-narware/cyber-portfolio" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
+                <i class="fa-brands fa-github text-sm"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 4: Bug Bounty Toolkit -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-pink/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-pink/40 animate-pulse"></div>
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-[10px] font-mono text-cyber-pink tracking-widest">[ PROJ_04 // HOSTED // 2025 ]</span>
+              <div class="flex space-x-2 text-slate-400 text-xs">
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Python</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Bash</span>
+              </div>
+            </div>
+            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">Bug Bounty Toolkit</h4>
+            <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
+              Curated scripts and automation pipelines designed for rapid subdomain enumeration, port mapping, and directory fuzzing.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-pink/60 relative overflow-hidden group-hover:border-cyber-pink/40 transition-colors">
+              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ TOOLKIT_FUZZER ]</div>
+              <div class="text-center group-hover:scale-105 transition-transform duration-300">
+                <i class="fa-solid fa-microchip text-2xl mb-1 block animate-pulse"></i>
+                <span>ENUMERATION AUTOMATION</span>
+              </div>
+            </div>
+            <div class="flex justify-between gap-3 pt-2">
+              <button class="flex-1 py-2.5 bg-cyber-pink/10 hover:bg-cyber-pink/30 border border-cyber-pink text-cyber-pink font-orbitron font-bold text-[10px] tracking-widest rounded transition-all launch-sim-btn" data-project="bugbounty">
+                <i class="fa-solid fa-terminal mr-1"></i> LAUNCH SYSTEM
+              </button>
+              <a href="https://github.com/Bhushan-narware" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
+                <i class="fa-brands fa-github text-sm"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 5: Network Scanner -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-accent/40 animate-pulse"></div>
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-[10px] font-mono text-cyber-accent tracking-widest">[ PROJ_05 // ACTIVE // 2025 ]</span>
+              <div class="flex space-x-2 text-slate-400 text-xs">
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Python</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Scapy</span>
+              </div>
+            </div>
+            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">Network Scanner</h4>
+            <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
+              An ARP-request network mapper that scans host IP blocks, retrieves MAC addresses, and maps open port banners in active subnets.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-accent/60 relative overflow-hidden group-hover:border-cyber-accent/40 transition-colors">
+              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ ARPMAP_SOCKET ]</div>
+              <div class="text-center group-hover:scale-105 transition-transform duration-300">
+                <i class="fa-solid fa-radar text-2xl mb-1 block animate-pulse"></i>
+                <span>SUBNET BANNER GRABBER</span>
+              </div>
+            </div>
+            <div class="flex justify-between gap-3 pt-2">
+              <button class="flex-1 py-2.5 bg-cyber-accent/10 hover:bg-cyber-accent/30 border border-cyber-accent text-cyber-accent font-orbitron font-bold text-[10px] tracking-widest rounded transition-all launch-sim-btn" data-project="netscanner">
+                <i class="fa-solid fa-terminal mr-1"></i> LAUNCH SYSTEM
+              </button>
+              <a href="https://github.com/Bhushan-narware" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
+                <i class="fa-brands fa-github text-sm"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 6: Password Manager -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-purple/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-purple/40 animate-pulse"></div>
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-[10px] font-mono text-cyber-purple tracking-widest">[ PROJ_06 // SECURE // 2025 ]</span>
+              <div class="flex space-x-2 text-slate-400 text-xs">
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Python</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">SQLite</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Cryptography</span>
+              </div>
+            </div>
+            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">Password Manager</h4>
+            <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
+              A local vault with custom master-key authorization that stores encrypted database credentials utilizing AES-256 cipher blocks in SQLite.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-purple/60 relative overflow-hidden group-hover:border-cyber-purple/40 transition-colors">
+              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ VAULT_ENCRYPTED ]</div>
+              <div class="text-center group-hover:scale-105 transition-transform duration-300">
+                <i class="fa-solid fa-vault text-2xl mb-1 block animate-pulse"></i>
+                <span>SECURE MASTER STORAGE</span>
+              </div>
+            </div>
+            <div class="flex justify-between gap-3 pt-2">
+              <button class="flex-1 py-2.5 bg-cyber-purple/10 hover:bg-cyber-purple/30 border border-cyber-purple text-cyber-purple font-orbitron font-bold text-[10px] tracking-widest rounded transition-all launch-sim-btn" data-project="passmanager">
+                <i class="fa-solid fa-terminal mr-1"></i> LAUNCH SYSTEM
+              </button>
+              <a href="https://github.com/Bhushan-narware" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
+                <i class="fa-brands fa-github text-sm"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 7: SOC Dashboard -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-pink/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-pink/40 animate-pulse"></div>
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-[10px] font-mono text-cyber-pink tracking-widest">[ PROJ_07 // HOSTED // 2026 ]</span>
+              <div class="flex space-x-2 text-slate-400 text-xs">
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">React</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Chart.js</span>
+              </div>
+            </div>
+            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">SOC Dashboard</h4>
+            <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
+              Designed a mock security operations dashboard representing active SIEM feeds, alerts mapping, and security packet inspection logs.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-pink/60 relative overflow-hidden group-hover:border-cyber-pink/40 transition-colors">
+              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ SIEM_ALERT_HUD ]</div>
+              <div class="text-center group-hover:scale-105 transition-transform duration-300">
+                <i class="fa-solid fa-chart-line text-2xl mb-1 block animate-pulse"></i>
+                <span>VISUAL THREAT STACK</span>
+              </div>
+            </div>
+            <div class="flex justify-between gap-3 pt-2">
+              <button class="flex-1 py-2.5 bg-cyber-pink/10 hover:bg-cyber-pink/30 border border-cyber-pink text-cyber-pink font-orbitron font-bold text-[10px] tracking-widest rounded transition-all launch-sim-btn" data-project="socdash">
+                <i class="fa-solid fa-terminal mr-1"></i> LAUNCH SYSTEM
+              </button>
+              <a href="https://github.com/Bhushan-narware" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
+                <i class="fa-brands fa-github text-sm"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 8: Threat Intelligence Platform -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-cyan/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between transition-colors duration-300 group relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-0.5 bg-cyber-cyan/40 animate-pulse"></div>
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-[10px] font-mono text-cyber-cyan tracking-widest">[ PROJ_08 // ACTIVE // 2026 ]</span>
+              <div class="flex space-x-2 text-slate-400 text-xs">
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">NextJS</span>
+                <span class="px-2 py-0.5 rounded bg-cyber-black border border-cyber-border/50">Tailwind</span>
+              </div>
+            </div>
+            <h4 class="font-orbitron font-bold text-slate-100 text-lg tracking-wider mb-2">Threat Intelligence Platform</h4>
+            <p class="font-mono text-xs text-slate-400 mb-6 leading-relaxed">
+              Aggregates open-source threat feed indicators of compromise (IoCs) via external public APIs and displays interactive security analysis charts.
+            </p>
+          </div>
+          <div class="space-y-4">
+            <div class="h-28 bg-cyber-black border border-cyber-border/40 rounded flex items-center justify-center font-mono text-[10px] text-cyber-cyan/60 relative overflow-hidden group-hover:border-cyber-cyan/40 transition-colors">
+              <div class="absolute top-1 left-2 tracking-widest text-[8px] text-slate-600">[ MALWARE_IP_FEED ]</div>
+              <div class="text-center group-hover:scale-105 transition-transform duration-300">
+                <i class="fa-solid fa-triangle-exclamation text-2xl mb-1 block animate-pulse"></i>
+                <span>REALTIME FEED QUERY</span>
+              </div>
+            </div>
+            <div class="flex justify-between gap-3 pt-2">
+              <button class="flex-1 py-2.5 bg-cyber-cyan/10 hover:bg-cyber-cyan/30 border border-cyber-cyan text-cyber-cyan font-orbitron font-bold text-[10px] tracking-widest rounded transition-all launch-sim-btn" data-project="threatintel">
+                <i class="fa-solid fa-terminal mr-1"></i> LAUNCH SYSTEM
+              </button>
+              <a href="https://github.com/Bhushan-narware" target="_blank" class="px-4 py-2.5 bg-cyber-light/60 hover:bg-cyber-purple/20 border border-cyber-border hover:border-cyber-purple rounded text-slate-300 hover:text-white transition-all flex items-center justify-center">
                 <i class="fa-brands fa-github text-sm"></i>
               </a>
             </div>
@@ -1127,9 +1723,7 @@
         </div>
 
       </div>
-    </section>
-
-    <!-- 7. RESUME VIEWER SECTION -->
+<!-- 7. RESUME VIEWER SECTION -->
     <section id="resume" class="py-20 border-t border-cyber-border/40 scroll-mt-20">
       
       <!-- Section Title -->
@@ -1227,6 +1821,83 @@
             </div>
           </div>
 
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7.5. CYBERSECURITY BLOG TIPS SECTION -->
+    <section id="cybersecurity-tips" class="py-20 border-t border-cyber-border/40 scroll-mt-20 scroll-reveal-item">
+      
+      <!-- Section Title -->
+      <div class="mb-12 text-center lg:text-left">
+        <h3 class="text-xs font-bold font-orbitron text-cyber-pink tracking-[0.4em] uppercase mb-2">// INTEL TIPS DATABASE</h3>
+        <h2 class="text-3xl font-black font-orbitron text-slate-100 flex items-center justify-center lg:justify-start">
+          CYBERSECURITY TIPS & INSIGHTS <span class="text-cyber-accent ml-2 animate-pulse">_</span>
+        </h2>
+      </div>
+
+      <!-- Blog Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Blog Tip 1 -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-accent shadow-[0_0_15px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between h-80 transition-colors duration-300 hover-tilt group">
+          <div class="space-y-4">
+            <div class="text-cyber-accent text-3xl group-hover:scale-110 transition-transform origin-left">
+              <i class="fa-solid fa-file-shield"></i>
+            </div>
+            <div>
+              <span class="text-[9px] font-mono text-slate-500 block mb-1">PUBLISHED: 2026 // ID: SEC_01</span>
+              <h4 class="font-orbitron font-bold text-slate-100 text-base tracking-wider">Web Application Defense</h4>
+              <p class="text-xs text-slate-400 font-mono mt-3 leading-relaxed">
+                Protecting input boundaries by sanitizing SQL inputs, using parameterized queries, and securing cookies with HttpOnly, Secure, and SameSite attributes to block CSRF exploits.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-cyber-border/60 flex justify-between items-center font-mono text-[9px] text-slate-500">
+            <span>SEV_INDEX: MINIMAL</span>
+            <span class="text-cyber-accent font-bold">[ VIEW_SEC_GUIDE ]</span>
+          </div>
+        </div>
+
+        <!-- Blog Tip 2 -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-purple shadow-[0_0_15px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between h-80 transition-colors duration-300 hover-tilt group">
+          <div class="space-y-4">
+            <div class="text-cyber-purple text-3xl group-hover:scale-110 transition-transform origin-left">
+              <i class="fa-solid fa-network-wired"></i>
+            </div>
+            <div>
+              <span class="text-[9px] font-mono text-slate-500 block mb-1">PUBLISHED: 2026 // ID: SEC_02</span>
+              <h4 class="font-orbitron font-bold text-slate-100 text-base tracking-wider">Network Port Hardening</h4>
+              <p class="text-xs text-slate-400 font-mono mt-3 leading-relaxed">
+                Auditing server banners and disabling non-essential services. Configure iptables to block network sweep attempts and mask headers like Apache or Nginx system signatures.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-cyber-border/60 flex justify-between items-center font-mono text-[9px] text-slate-500">
+            <span>SEV_INDEX: CRITICAL</span>
+            <span class="text-cyber-purple font-bold">[ VIEW_SEC_GUIDE ]</span>
+          </div>
+        </div>
+
+        <!-- Blog Tip 3 -->
+        <div class="p-6 rounded bg-cyber-light/40 border border-cyber-border hover:border-cyber-pink shadow-[0_0_15px_rgba(0,0,0,0.4)] backdrop-blur-cyber flex flex-col justify-between h-80 transition-colors duration-300 hover-tilt group">
+          <div class="space-y-4">
+            <div class="text-cyber-pink text-3xl group-hover:scale-110 transition-transform origin-left">
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+              <span class="text-[9px] font-mono text-slate-500 block mb-1">PUBLISHED: 2026 // ID: SEC_03</span>
+              <h4 class="font-orbitron font-bold text-slate-100 text-base tracking-wider">Credential Integrity</h4>
+              <p class="text-xs text-slate-400 font-mono mt-3 leading-relaxed">
+                Utilize argon2id or bcrypt hashing systems with custom cryptographic salt configurations. Never store credentials in plaintext or hardcode tokens in repository source scripts.
+              </p>
+            </div>
+          </div>
+          <div class="pt-4 border-t border-cyber-border/60 flex justify-between items-center font-mono text-[9px] text-slate-500">
+            <span>SEV_INDEX: HIGH</span>
+            <span class="text-cyber-pink font-bold">[ VIEW_SEC_GUIDE ]</span>
+          </div>
         </div>
 
       </div>

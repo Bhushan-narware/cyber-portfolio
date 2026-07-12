@@ -188,7 +188,7 @@ function initThreeBackground() {
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   
   const particlesMaterial = new THREE.PointsMaterial({
-    color: 0x00F5FF,
+    color: 0xff0000,
     size: 1.5,
     transparent: true,
     opacity: 0.7,
@@ -200,7 +200,7 @@ function initThreeBackground() {
 
   // Line connections between particle system
   const linesMaterial = new THREE.LineBasicMaterial({
-    color: 0x8A2BE2,
+    color: 0xff3b3b,
     transparent: true,
     opacity: 0.15,
     blending: THREE.AdditiveBlending
@@ -284,7 +284,7 @@ function initHero3DScene() {
   // Hologram core sphere
   const sphereGeo = new THREE.SphereGeometry(2, 32, 32);
   const sphereMat = new THREE.PointsMaterial({
-    color: 0x00FFFF,
+    color: 0xff0000,
     size: 0.08,
     transparent: true,
     opacity: 0.6,
@@ -295,13 +295,13 @@ function initHero3DScene() {
 
   // Outer orbital rings
   const ring1Geo = new THREE.TorusGeometry(3, 0.02, 8, 64);
-  const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x8A2BE2, transparent: true, opacity: 0.4 });
+  const ring1Mat = new THREE.MeshBasicMaterial({ color: 0xff3b3b, transparent: true, opacity: 0.4 });
   const orbitRing1 = new THREE.Mesh(ring1Geo, ring1Mat);
   orbitRing1.rotation.x = Math.PI / 3;
   scene.add(orbitRing1);
 
   const ring2Geo = new THREE.TorusGeometry(3.6, 0.015, 8, 64);
-  const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x00F5FF, transparent: true, opacity: 0.3 });
+  const ring2Mat = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.3 });
   const orbitRing2 = new THREE.Mesh(ring2Geo, ring2Mat);
   orbitRing2.rotation.y = Math.PI / 4;
   scene.add(orbitRing2);
@@ -311,7 +311,7 @@ function initHero3DScene() {
   scene.add(hexGroup);
   
   const hexGeo = new THREE.RingGeometry(0.15, 0.2, 6);
-  const hexMat = new THREE.MeshBasicMaterial({ color: 0x00FFFF, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+  const hexMat = new THREE.MeshBasicMaterial({ color: 0xff4444, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
   
   const hexCount = 12;
   const hexagons = [];
@@ -342,7 +342,7 @@ function initHero3DScene() {
   }
 
   // Lighting
-  const light = new THREE.PointLight(0x00F5FF, 2, 50);
+  const light = new THREE.PointLight(0xff0000, 2, 50);
   light.position.set(0, 0, 5);
   scene.add(light);
 
@@ -440,7 +440,7 @@ function initMatrixRain() {
     ctx.fillStyle = 'rgba(5, 5, 8, 0.06)';
     ctx.fillRect(0, 0, width, height);
     
-    ctx.fillStyle = '#00F5FF';
+    ctx.fillStyle = '#ff0000';
     ctx.font = fontSize + 'px monospace';
     
     for (let i = 0; i < rainDrops.length; i++) {
@@ -468,10 +468,11 @@ function initTypingSubtitle() {
   if (!target) return;
   
   const sentences = [
-    "Cybersecurity Researcher",
-    "Certified Ethical Hacker (CEH)",
-    "Penetration Tester",
-    "Red Team Enthusiast"
+    "Cyber Security Researcher",
+    "Ethical Hacker",
+    "Python Developer",
+    "AI Developer",
+    "Full Stack Developer"
   ];
   
   let i = 0;
@@ -735,18 +736,7 @@ function initProjectSimulators() {
 
       // Simulated logging scripts
       let logs = [];
-      if (proj === 'darkneteye') {
-        logs = [
-          "[+] Initializing DarknetEye OSINT scanner v1.0.4...",
-          "[*] Pulling target threat footprint matrices...",
-          "[*] Probing port configurations for target subdomains...",
-          "[-] Target host: secure-server.net [IP: 104.244.42.1]",
-          "[-] Port 80: HTTP (nginx) open",
-          "[-] Port 443: HTTPS (ssl) open",
-          "[-] Port 22: SSH (filtered)",
-          "[+] Threat footprint mapping finalized. Dumped to darknet_report.json"
-        ];
-      } else if (proj === 'passgenx') {
+      if (proj === 'passgenx') {
         logs = [
           "[+] Initializing PassGenX secure generation kernel...",
           "[*] Parameters: length=16, complexity=maximum, include_symbols=true",
@@ -755,24 +745,61 @@ function initProjectSimulators() {
           "    -> e$R8#mK9!2wQp&5xZ (Entropy Strength: 128 bits - EXTREME)",
           "[+] Credentials matrix protected."
         ];
-      } else if (proj === 'iptracker') {
+      } else if (proj === 'vishai') {
         logs = [
-          "[+] Launching IPTracker geolocation tracking array...",
-          "[*] Handshaking connection to geolocation data node...",
-          "[-] Lookup request: 8.8.8.8",
-          "[-] Hostname: dns.google",
-          "[-] Coordinates: Latitude 37.751, Longitude -97.822",
-          "[-] Registry: ARIN (Google LLC)",
-          "[+] Geolocation tracking array query complete."
+          "[+] Connecting to VishAI cognitive pipeline...",
+          "[*] Loading dynamic LLM model vectors...",
+          "[-] System prompt check: OPERATOR=Bhushan",
+          "[-] Decrypted query response: 'Welcome back. Hacking division status is green. All nodes secure.'",
+          "[+] VishAI connection closed."
         ];
-      } else if (proj === 'localai') {
+      } else if (proj === 'portfolio') {
         logs = [
-          "[+] Spinning up Local AI Environment Llama.cpp framework...",
-          "[*] Model allocation: Qwen3 (8B) quantized [INT4]",
-          "[*] Portable disk buffer initialized: 8GB flash directory",
-          "[-] Processing prompt tokens: 'Audit Web Security configurations...'",
-          "[-] AI reply output stream: 'Recommended security patches include enabling CSRF defense tokens and sanitizing MySQL database variables.'",
-          "[+] localai simulator process terminated."
+          "[+] Syncing portfolio code status...",
+          "[*] Loading Vite configurations and asset pipelines...",
+          "[*] Processing asset files (main.js, index.html, style.css)...",
+          "[-] All files compiled. Server listening on localhost:5173",
+          "[+] Deployment completed successfully."
+        ];
+      } else if (proj === 'bugbounty') {
+        logs = [
+          "[+] Launching Bug Bounty automated scanner...",
+          "[*] Subdomain discovery module active...",
+          "[-] Fuzzing target directories for hidden paths...",
+          "[-] 200 OK: /admin-panel, /config.json (EXPOSED)",
+          "[+] Bug Bounty vulnerability reports generated."
+        ];
+      } else if (proj === 'netscanner') {
+        logs = [
+          "[+] Initializing Scapy ARP-ping network scan...",
+          "[*] Scanning subnet 192.168.1.0/24...",
+          "[-] Target found: 192.168.1.105 (MAC: 00:0C:29:XX:XX:XX)",
+          "[-] Grabbed banner on port 80: Apache/2.4.41 (Ubuntu)",
+          "[+] NetScanner scan complete."
+        ];
+      } else if (proj === 'passmanager') {
+        logs = [
+          "[+] Opening SQLite password database vault...",
+          "[*] Verification: AES-256 cipher blocks checking master key...",
+          "[-] Validation success: credentials authenticated.",
+          "[-] Decrypted passwords: [Github: *******], [Google: *******]",
+          "[+] Password Manager session encrypted and locked."
+        ];
+      } else if (proj === 'socdash') {
+        logs = [
+          "[+] Streaming live security alert feeds...",
+          "[*] Alert triggered: Multiple failed SSH attempts from 185.220.101.4",
+          "[-] Blocking suspect host IP via iptables firewall rules...",
+          "[-] Connection closed. Status: DEFENDED",
+          "[+] SOC system logs updated."
+        ];
+      } else if (proj === 'threatintel') {
+        logs = [
+          "[+] Querying Threat Intel API feed...",
+          "[*] Downloading latest malware hash patterns (MD5/SHA256)...",
+          "[-] Identified threat: Ransomware.LockBit.v3 hash detected",
+          "[-] Mapped 14 command-and-control server IPs to blacklists",
+          "[+] Threat Intelligence Platform update finalized."
         ];
       }
 
@@ -798,16 +825,31 @@ function initProjectSimulators() {
 // --- AI DIGITAL CHATBOT COGNITIVE LOGIC ---
 const aiResponses = {
   'skills': () => {
-    return "Bhushan's security skills are built on a solid foundation of Python, Linux (Kali), Nmap, Burp Suite, Metasploit, Wireshark, Web Security Auditing, and OSINT recon methodology. He holds a Certified Ethical Hacker (CEH) license.";
+    return "Bhushan's security skills span offensive security (Burp Suite, Nmap, Metasploit, Wireshark, SQLMap, John the Ripper, Gobuster), developer skills (Python, JavaScript/TypeScript, React/Next.js, FastAPI, Node.js), databases (MySQL, Postgres, MongoDB), and local AI deployment. He holds a Certified Ethical Hacker (CEH) license.";
   },
-  'darkneteye': () => {
-    return "DarknetEye is an OSINT footprinting and automated target reconnaissance tool written in Python. It aggregates data inputs from ports, DNS configurations, and target domains.";
+  'vishai': () => {
+    return "VishAI is a cognitive AI chatbot interface that integrates dynamic local contextual configurations to provide expert systems security suggestions.";
   },
   'passgenx': () => {
-    return "PassGenX is a secure, highly-customizable password utility that generates passwords with custom entropy metrics to eliminate weak credentials.";
+    return "PassGenX is a secure, highly-customizable desktop password utility that generates credentials with maximum entropy parameters to eliminate weak passwords.";
   },
-  'iptracker': () => {
-    return "IPTracker is a geolocation mapping script designed to gather reconnaissance details on remote targets during penetration testing tasks.";
+  'portfolio': () => {
+    return "This cyber portfolio is a high-fidelity Single Page Application built using Vanilla JS, Vite, Tailwind CSS, GSAP, and Three.js.";
+  },
+  'bugbounty': () => {
+    return "The Bug Bounty Toolkit is a set of automation scripts fuzzer pipelines designed for rapid subdomain discovery and port mapping.";
+  },
+  'netscanner': () => {
+    return "Network Scanner is an ARP-request network mapper that scans host IP blocks, grabs port banners, and maps target subnets.";
+  },
+  'passmanager': () => {
+    return "Password Manager is a local master-key encrypted vault using AES-256 cipher blocks in SQLite database layers.";
+  },
+  'socdash': () => {
+    return "SOC Dashboard represents a SIEM alert monitoring station that streams firewall block actions and incident reports.";
+  },
+  'threatintel': () => {
+    return "Threat Intelligence Platform aggregates Indicators of Compromise (IoCs) via open APIs and maps malware hash threats.";
   },
   'contact': () => {
     return "You can reach Bhushan Narware immediately via bhushannarware0911@gmail.com, or check his LinkedIn profile at linkedin.com/in/Bhushan_narware.";
@@ -1203,8 +1245,196 @@ function initFPSCounter() {
   tick();
 }
 
+// --- INSANE INTRO LOADER SEQUENCER ---
+function initLoader() {
+  const loader = document.getElementById('intro-loader');
+  const feed = document.getElementById('loader-terminal');
+  const percentage = document.getElementById('loader-percentage');
+  const progressBar = document.getElementById('loader-progress-bar');
+  
+  if (!loader) return;
+
+  const logs = [
+    "[SYSTEM]: Handshake request initiated...",
+    "[SYSTEM]: Connecting to remote memory nodes at betuls_core...",
+    "[SYSTEM]: Access granted. Retrieving operator profiles...",
+    "[SYSTEM]: Initializing Decryption Engine (AES-256)...",
+    "[SYSTEM]: Decrypting profile fields (Name: Bhushan Narware)...",
+    "[SYSTEM]: Initializing WebGL Canvas particle grid buffers...",
+    "[SYSTEM]: Syncing Three.js 3D viewport parameters...",
+    "[SYSTEM]: Registering GSAP trigger modules...",
+    "[SYSTEM]: Establishing audio synthesizer pipelines...",
+    "[SYSTEM]: Boot sequence 100% complete. Transitioning to HUD..."
+  ];
+
+  let progress = 0;
+  let logIdx = 0;
+
+  function updateLoader() {
+    progress += Math.floor(Math.random() * 5) + 3;
+    if (progress > 100) progress = 100;
+
+    // Update bar and percentage text
+    if (progressBar) progressBar.style.width = progress + '%';
+    if (percentage) percentage.textContent = progress + '%';
+
+    // Print a log at regular intervals
+    const targetIdx = Math.floor((progress / 100) * logs.length);
+    while (logIdx < targetIdx && logIdx < logs.length) {
+      const newLine = document.createElement('div');
+      newLine.className = logIdx % 2 === 0 ? 'text-cyber-accent' : 'text-slate-400';
+      newLine.textContent = logs[logIdx];
+      feed.appendChild(newLine);
+      feed.scrollTop = feed.scrollHeight;
+      
+      if (isAudioEnabled) playBeep(600 + logIdx * 80, 0.03, 'sine');
+      logIdx++;
+    }
+
+    if (progress < 100) {
+      setTimeout(updateLoader, 60 + Math.random() * 80);
+    } else {
+      // Smoothly fade out the loader overlay
+      gsap.to(loader, {
+        opacity: 0,
+        y: -100,
+        duration: 0.8,
+        ease: "power3.inOut",
+        onComplete: () => {
+          loader.style.display = 'none';
+          document.body.classList.remove('overflow-hidden');
+          // Automatically prompt welcome in console
+          const terminalFeed = document.getElementById('terminal-feed');
+          if (terminalFeed) {
+            const welcome = document.createElement('div');
+            welcome.className = 'text-cyber-accent font-bold';
+            welcome.textContent = '[UPLINK ACTIVE]: Welcome Operator. Type "help" to start hacking.';
+            terminalFeed.appendChild(welcome);
+          }
+        }
+      });
+    }
+  }
+
+  // Prevent page scroll during loading
+  document.body.classList.add('overflow-hidden');
+  
+  // Start loading sequence with a slight delay
+  setTimeout(updateLoader, 300);
+}
+
+// --- INTERACTIVE HACKING TOOLS GRID HUD ---
+function initHackerToolkit() {
+  const buttons = document.querySelectorAll('.tool-hud-btn');
+  const hudName = document.getElementById('hud-tool-name');
+  const hudType = document.getElementById('hud-tool-type');
+  const hudSyntax = document.getElementById('hud-tool-syntax');
+  const hudDesc = document.getElementById('hud-tool-desc');
+  const hudStatus = document.getElementById('tool-status');
+
+  if (!buttons.length || !hudName) return;
+
+  buttons.forEach(btn => {
+    // On Hover, update the HUD screen
+    btn.addEventListener('mouseenter', () => {
+      const tool = btn.getAttribute('data-tool');
+      const type = btn.getAttribute('data-type');
+      const syntax = btn.getAttribute('data-syntax');
+      const desc = btn.getAttribute('data-desc');
+
+      hudName.textContent = tool;
+      hudType.textContent = type;
+      hudSyntax.textContent = syntax;
+      hudDesc.textContent = desc;
+      
+      if (hudStatus) {
+        hudStatus.textContent = `[ ACTIVE_QUERY: ${tool.toUpperCase()} ]`;
+        hudStatus.className = "text-cyber-accent animate-pulse";
+      }
+
+      // Play light click sound
+      if (isAudioEnabled) playBeep(900, 0.015, 'sine');
+    });
+
+    btn.addEventListener('mouseleave', () => {
+      if (hudStatus) {
+        hudStatus.textContent = "[ IDLE_STANDBY ]";
+        hudStatus.className = "text-slate-500";
+      }
+    });
+
+    btn.addEventListener('click', () => {
+      const tool = btn.getAttribute('data-tool');
+      // Trigger a brief command execution printout in the main console panel!
+      const consoleFeed = document.getElementById('terminal-feed');
+      if (consoleFeed) {
+        // Open terminal if minimized
+        const terminalPanel = document.getElementById('terminal-console-panel');
+        if (terminalPanel) terminalPanel.classList.remove('translate-y-full');
+
+        playExploitSound();
+
+        const cmdLine = document.createElement('div');
+        cmdLine.className = 'text-cyber-accent font-bold mt-4';
+        cmdLine.textContent = `[TOOL_EXEC] visitor@bhushan_sec:~$ ${btn.getAttribute('data-syntax')}`;
+        consoleFeed.appendChild(cmdLine);
+
+        const outcome = document.createElement('div');
+        outcome.className = 'text-slate-300';
+        outcome.textContent = `[*] Invoking ${tool} subprocess pipeline. Scan module initialized successfully.`;
+        consoleFeed.appendChild(outcome);
+        
+        consoleFeed.scrollTop = consoleFeed.scrollHeight;
+      }
+    });
+  });
+}
+
+// --- DYNAMIC CLOCK AND VISITOR CORES HUD ---
+function initRealTimeStats() {
+  const clock = document.getElementById('hud-clock');
+  const visitors = document.getElementById('visitor-count');
+
+  if (clock) {
+    function tickClock() {
+      const now = new Date();
+      clock.textContent = now.toLocaleTimeString() + " UTC" + (now.getTimezoneOffset() > 0 ? "-" : "+") + Math.abs(now.getTimezoneOffset()/60);
+    }
+    setInterval(tickClock, 1000);
+    tickClock();
+  }
+
+  if (visitors) {
+    let count = 4289;
+    // Animate initial count up
+    let current = 0;
+    const step = Math.floor(count / 30);
+    function countUp() {
+      current += step;
+      if (current >= count) {
+        current = count;
+        visitors.textContent = current.toLocaleString();
+        
+        // Randomly increment every few seconds
+        setInterval(() => {
+          if (Math.random() > 0.6) {
+            count += Math.floor(Math.random() * 3) + 1;
+            visitors.textContent = count.toLocaleString();
+            if (isAudioEnabled) playBeep(1100, 0.01, 'sine');
+          }
+        }, 4000);
+      } else {
+        visitors.textContent = current.toLocaleString();
+        setTimeout(countUp, 30);
+      }
+    }
+    countUp();
+  }
+}
+
 // --- INITIALIZE ALL MODULES ---
 window.addEventListener('DOMContentLoaded', () => {
+  initLoader();
   initHUDControls();
   initCustomCursor();
   initTypingSubtitle();
@@ -1217,4 +1447,6 @@ window.addEventListener('DOMContentLoaded', () => {
   initContactForm();
   initGSAPAnimations();
   initFPSCounter();
+  initHackerToolkit();
+  initRealTimeStats();
 });
