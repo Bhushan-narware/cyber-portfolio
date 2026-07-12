@@ -188,7 +188,7 @@ function initThreeBackground() {
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   
   const particlesMaterial = new THREE.PointsMaterial({
-    color: 0x00ff66,
+    color: 0xff007f,
     size: 1.5,
     transparent: true,
     opacity: 0.7,
@@ -200,7 +200,7 @@ function initThreeBackground() {
 
   // Line connections between particle system
   const linesMaterial = new THREE.LineBasicMaterial({
-    color: 0x00cc44,
+    color: 0xd6006f,
     transparent: true,
     opacity: 0.15,
     blending: THREE.AdditiveBlending
@@ -284,7 +284,7 @@ function initHero3DScene() {
   // Hologram core sphere
   const sphereGeo = new THREE.SphereGeometry(2, 32, 32);
   const sphereMat = new THREE.PointsMaterial({
-    color: 0x00ff66,
+    color: 0xff007f,
     size: 0.08,
     transparent: true,
     opacity: 0.6,
@@ -295,13 +295,13 @@ function initHero3DScene() {
 
   // Outer orbital rings
   const ring1Geo = new THREE.TorusGeometry(3, 0.02, 8, 64);
-  const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x00cc44, transparent: true, opacity: 0.4 });
+  const ring1Mat = new THREE.MeshBasicMaterial({ color: 0xd6006f, transparent: true, opacity: 0.4 });
   const orbitRing1 = new THREE.Mesh(ring1Geo, ring1Mat);
   orbitRing1.rotation.x = Math.PI / 3;
   scene.add(orbitRing1);
 
   const ring2Geo = new THREE.TorusGeometry(3.6, 0.015, 8, 64);
-  const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x00ff66, transparent: true, opacity: 0.3 });
+  const ring2Mat = new THREE.MeshBasicMaterial({ color: 0xff007f, transparent: true, opacity: 0.3 });
   const orbitRing2 = new THREE.Mesh(ring2Geo, ring2Mat);
   orbitRing2.rotation.y = Math.PI / 4;
   scene.add(orbitRing2);
@@ -311,7 +311,7 @@ function initHero3DScene() {
   scene.add(hexGroup);
   
   const hexGeo = new THREE.RingGeometry(0.15, 0.2, 6);
-  const hexMat = new THREE.MeshBasicMaterial({ color: 0x00ff99, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+  const hexMat = new THREE.MeshBasicMaterial({ color: 0xff33aa, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
   
   const hexCount = 12;
   const hexagons = [];
@@ -342,7 +342,7 @@ function initHero3DScene() {
   }
 
   // Lighting
-  const light = new THREE.PointLight(0x00ff66, 2, 50);
+  const light = new THREE.PointLight(0xff007f, 2, 50);
   light.position.set(0, 0, 5);
   scene.add(light);
 
@@ -440,7 +440,7 @@ function initMatrixRain() {
     ctx.fillStyle = 'rgba(5, 5, 8, 0.06)';
     ctx.fillRect(0, 0, width, height);
     
-    ctx.fillStyle = '#00ff66';
+    ctx.fillStyle = '#ff007f';
     ctx.font = fontSize + 'px monospace';
     
     for (let i = 0; i < rainDrops.length; i++) {
