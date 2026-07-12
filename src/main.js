@@ -1621,6 +1621,19 @@ function initColorThemeSwitcher() {
       // 3. Update Matrix Rain FillStyle Color
       globalMatrixColor = theme.accent;
 
+      // Update UI active channel tag label
+      const channelTag = document.getElementById('active-channel-tag');
+      if (channelTag) {
+        const labels = {
+          red: '[RED_ALERT]',
+          green: '[MATRIX_GRN]',
+          blue: '[BLUE_NET]',
+          pink: '[NEON_PINK]',
+          amber: '[AMBER_SYS]'
+        };
+        channelTag.textContent = labels[themeKey] || `[${themeKey.toUpperCase()}_NET]`;
+      }
+
       // 4. Update dynamic console feeds
       const consoleFeed = document.getElementById('terminal-feed');
       if (consoleFeed) {
