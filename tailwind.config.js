@@ -10,15 +10,15 @@ export default {
       colors: {
         cyber: {
           black: '#000000',
-          dark: '#0f0f0f',
-          gray: '#111111',
-          light: '#181818',
-          accent: '#ff0000',
-          purple: '#b30000',
-          cyan: '#ff4444',
-          pink: '#ff2b2b',
-          border: 'rgba(255, 0, 0, 0.2)',
-          glow: 'rgba(255, 43, 43, 0.35)'
+          dark: '#0e120f',
+          gray: '#111612',
+          light: '#161c18',
+          accent: '#00ff66',
+          purple: '#00cc44',
+          cyan: '#00ff99',
+          pink: '#33ff33',
+          border: 'rgba(0, 255, 102, 0.2)',
+          glow: 'rgba(0, 255, 102, 0.35)'
         }
       },
       fontFamily: {
