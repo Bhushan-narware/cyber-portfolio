@@ -6,6 +6,16 @@ let isAudioEnabled = false;
 let isMatrixEnabled = false;
 let terminalLogHistory = [];
 
+// --- GLOBAL THREE.JS & MATRIX COLOR POINTERS ---
+let globalThreeParticlesMat = null;
+let globalThreeLinesMat = null;
+let globalThreeSphereMat = null;
+let globalThreeRing1Mat = null;
+let globalThreeRing2Mat = null;
+let globalThreeHexMat = null;
+let globalThreeLight = null;
+let globalMatrixColor = '#0066ff';
+
 // --- UTILITY SOUND SYNTHESIZER (Web Audio API) ---
 function initAudio() {
   if (audioCtx) return;
@@ -197,6 +207,7 @@ function initThreeBackground() {
 
   const particleSystem = new THREE.Points(particlesGeometry, particlesMaterial);
   scene.add(particleSystem);
+  globalThreeParticlesMat = particlesMaterial;
 
   // Line connections between particle system
   const linesMaterial = new THREE.LineBasicMaterial({
@@ -205,6 +216,7 @@ function initThreeBackground() {
     opacity: 0.15,
     blending: THREE.AdditiveBlending
   });
+  globalThreeLinesMat = linesMaterial;
 
   let lineSegments;
   
@@ -292,6 +304,7 @@ function initHero3DScene() {
   });
   const coreSphere = new THREE.Points(sphereGeo, sphereMat);
   scene.add(coreSphere);
+  globalThreeSphereMat = sphereMat;
 
   // Outer orbital rings
   const ring1Geo = new THREE.TorusGeometry(3, 0.02, 8, 64);
@@ -299,12 +312,14 @@ function initHero3DScene() {
   const orbitRing1 = new THREE.Mesh(ring1Geo, ring1Mat);
   orbitRing1.rotation.x = Math.PI / 3;
   scene.add(orbitRing1);
+  globalThreeRing1Mat = ring1Mat;
 
   const ring2Geo = new THREE.TorusGeometry(3.6, 0.015, 8, 64);
   const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x0066ff, transparent: true, opacity: 0.3 });
   const orbitRing2 = new THREE.Mesh(ring2Geo, ring2Mat);
   orbitRing2.rotation.y = Math.PI / 4;
   scene.add(orbitRing2);
+  globalThreeRing2Mat = ring2Mat;
 
   // Hexagons orbiting inside (Using low-segment shapes)
   const hexGroup = new THREE.Group();
@@ -312,6 +327,7 @@ function initHero3DScene() {
   
   const hexGeo = new THREE.RingGeometry(0.15, 0.2, 6);
   const hexMat = new THREE.MeshBasicMaterial({ color: 0x00a8ff, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+  globalThreeHexMat = hexMat;
   
   const hexCount = 12;
   const hexagons = [];
@@ -345,6 +361,7 @@ function initHero3DScene() {
   const light = new THREE.PointLight(0x0066ff, 2, 50);
   light.position.set(0, 0, 5);
   scene.add(light);
+  globalThreeLight = light;
 
   // Mouse drag rotation setup
   let isDragging = false;
@@ -440,7 +457,7 @@ function initMatrixRain() {
     ctx.fillStyle = 'rgba(5, 5, 8, 0.06)';
     ctx.fillRect(0, 0, width, height);
     
-    ctx.fillStyle = '#0066ff';
+    ctx.fillStyle = globalMatrixColor;
     ctx.font = fontSize + 'px monospace';
     
     for (let i = 0; i < rainDrops.length; i++) {
@@ -1432,6 +1449,191 @@ function initRealTimeStats() {
   }
 }
 
+// --- DYNAMIC MULTI-COLOR THEME SELECTOR ---
+function initColorThemeSwitcher() {
+  const themeButtons = document.querySelectorAll('.color-theme-btn');
+  
+  const colorThemes = {
+    red: {
+      accent: '#ff0000',
+      purple: '#b30000',
+      cyan: '#ff4444',
+      pink: '#ff2b2b',
+      border: 'rgba(255, 0, 0, 0.2)',
+      glow: 'rgba(255, 43, 43, 0.35)',
+      dark: '#0f0f0f',
+      gray: '#111111',
+      light: '#181818',
+      
+      // Alphas
+      accentAlpha40: 'rgba(255, 0, 0, 0.4)',
+      purpleAlpha20: 'rgba(179, 0, 0, 0.2)',
+      accentAlpha35: 'rgba(255, 0, 0, 0.35)',
+      purpleAlpha35: 'rgba(179, 0, 0, 0.35)',
+      cyanAlpha35: 'rgba(255, 68, 68, 0.35)',
+      accentAlpha40Pulse: 'rgba(255, 0, 0, 0.4)',
+      accentAlpha10: 'rgba(255, 0, 0, 0.1)',
+      accentAlpha05: 'rgba(255, 0, 0, 0.05)',
+      
+      // Three.js hex colors
+      threeAccent: 0xff0000,
+      threePurple: 0xb30000,
+      threeCyan: 0xff4444
+    },
+    green: {
+      accent: '#00ff66',
+      purple: '#00cc44',
+      cyan: '#00ff99',
+      pink: '#33ff33',
+      border: 'rgba(0, 255, 102, 0.2)',
+      glow: 'rgba(0, 255, 102, 0.35)',
+      dark: '#0e120f',
+      gray: '#111612',
+      light: '#161c18',
+      
+      accentAlpha40: 'rgba(0, 255, 102, 0.4)',
+      purpleAlpha20: 'rgba(0, 204, 68, 0.2)',
+      accentAlpha35: 'rgba(0, 255, 102, 0.35)',
+      purpleAlpha35: 'rgba(0, 204, 68, 0.35)',
+      cyanAlpha35: 'rgba(0, 255, 153, 0.35)',
+      accentAlpha40Pulse: 'rgba(0, 255, 102, 0.4)',
+      accentAlpha10: 'rgba(0, 255, 102, 0.1)',
+      accentAlpha05: 'rgba(0, 255, 102, 0.05)',
+      
+      threeAccent: 0x00ff66,
+      threePurple: 0x00cc44,
+      threeCyan: 0x00ff99
+    },
+    blue: {
+      accent: '#0066ff',
+      purple: '#0033cc',
+      cyan: '#00a8ff',
+      pink: '#00f0ff',
+      border: 'rgba(0, 102, 255, 0.15)',
+      glow: 'rgba(0, 102, 255, 0.3)',
+      dark: '#000000',
+      gray: '#080808',
+      light: '#101010',
+      
+      accentAlpha40: 'rgba(0, 102, 255, 0.4)',
+      purpleAlpha20: 'rgba(0, 51, 204, 0.2)',
+      accentAlpha35: 'rgba(0, 102, 255, 0.35)',
+      purpleAlpha35: 'rgba(0, 51, 204, 0.35)',
+      cyanAlpha35: 'rgba(0, 168, 255, 0.35)',
+      accentAlpha40Pulse: 'rgba(0, 102, 255, 0.4)',
+      accentAlpha10: 'rgba(0, 102, 255, 0.1)',
+      accentAlpha05: 'rgba(0, 102, 255, 0.05)',
+      
+      threeAccent: 0x0066ff,
+      threePurple: 0x0033cc,
+      threeCyan: 0x00a8ff
+    },
+    pink: {
+      accent: '#ff007f',
+      purple: '#d6006f',
+      cyan: '#ff33aa',
+      pink: '#ff66cc',
+      border: 'rgba(255, 0, 127, 0.2)',
+      glow: 'rgba(255, 0, 127, 0.35)',
+      dark: '#120e10',
+      gray: '#161113',
+      light: '#1c1618',
+      
+      accentAlpha40: 'rgba(255, 0, 127, 0.4)',
+      purpleAlpha20: 'rgba(214, 0, 111, 0.2)',
+      accentAlpha35: 'rgba(255, 0, 127, 0.35)',
+      purpleAlpha35: 'rgba(214, 0, 111, 0.35)',
+      cyanAlpha35: 'rgba(255, 51, 170, 0.35)',
+      accentAlpha40Pulse: 'rgba(255, 0, 127, 0.4)',
+      accentAlpha10: 'rgba(255, 0, 127, 0.1)',
+      accentAlpha05: 'rgba(255, 0, 127, 0.05)',
+      
+      threeAccent: 0xff007f,
+      threePurple: 0xd6006f,
+      threeCyan: 0xff33aa
+    },
+    amber: {
+      accent: '#ff9900',
+      purple: '#cc6600',
+      cyan: '#ffbb00',
+      pink: '#ffee00',
+      border: 'rgba(255, 153, 0, 0.2)',
+      glow: 'rgba(255, 153, 0, 0.35)',
+      dark: '#12100e',
+      gray: '#161311',
+      light: '#1c1816',
+      
+      accentAlpha40: 'rgba(255, 153, 0, 0.4)',
+      purpleAlpha20: 'rgba(204, 102, 0, 0.2)',
+      accentAlpha35: 'rgba(255, 153, 0, 0.35)',
+      purpleAlpha35: 'rgba(204, 102, 0, 0.35)',
+      cyanAlpha35: 'rgba(255, 187, 0, 0.35)',
+      accentAlpha40Pulse: 'rgba(255, 153, 0, 0.4)',
+      accentAlpha10: 'rgba(255, 153, 0, 0.1)',
+      accentAlpha05: 'rgba(255, 153, 0, 0.05)',
+      
+      threeAccent: 0xff9900,
+      threePurple: 0xcc6600,
+      threeCyan: 0xffbb00
+    }
+  };
+
+  themeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const themeKey = btn.getAttribute('data-theme');
+      const theme = colorThemes[themeKey];
+      if (!theme) return;
+
+      // Play selection sound
+      if (isAudioEnabled) playBeep(1200, 0.04, 'sawtooth');
+
+      // 1. Update CSS Variables on Root DOM Element
+      const root = document.documentElement;
+      root.style.setProperty('--cyber-accent', theme.accent);
+      root.style.setProperty('--cyber-purple', theme.purple);
+      root.style.setProperty('--cyber-cyan', theme.cyan);
+      root.style.setProperty('--cyber-pink', theme.pink);
+      root.style.setProperty('--cyber-border', theme.border);
+      root.style.setProperty('--cyber-glow', theme.glow);
+      root.style.setProperty('--cyber-dark', theme.dark);
+      root.style.setProperty('--cyber-gray', theme.gray);
+      root.style.setProperty('--cyber-light', theme.light);
+      
+      // Update custom alphas
+      root.style.setProperty('--cyber-accent-alpha40', theme.accentAlpha40);
+      root.style.setProperty('--cyber-purple-alpha20', theme.purpleAlpha20);
+      root.style.setProperty('--cyber-accent-alpha35', theme.accentAlpha35);
+      root.style.setProperty('--cyber-purple-alpha35', theme.purpleAlpha35);
+      root.style.setProperty('--cyber-cyan-alpha35', theme.cyanAlpha35);
+      root.style.setProperty('--cyber-accent-alpha40-pulse', theme.accentAlpha40Pulse);
+      root.style.setProperty('--cyber-accent-alpha10', theme.accentAlpha10);
+      root.style.setProperty('--cyber-accent-alpha05', theme.accentAlpha05);
+
+      // 2. Update Three.js Material Colors (WebGL Scene)
+      if (globalThreeParticlesMat) globalThreeParticlesMat.color.setHex(theme.threeAccent);
+      if (globalThreeLinesMat) globalThreeLinesMat.color.setHex(theme.threePurple);
+      if (globalThreeSphereMat) globalThreeSphereMat.color.setHex(theme.threeAccent);
+      if (globalThreeRing1Mat) globalThreeRing1Mat.color.setHex(theme.threePurple);
+      if (globalThreeRing2Mat) globalThreeRing2Mat.color.setHex(theme.threeAccent);
+      if (globalThreeHexMat) globalThreeHexMat.color.setHex(theme.threeCyan);
+      if (globalThreeLight) globalThreeLight.color.setHex(theme.threeAccent);
+
+      // 3. Update Matrix Rain FillStyle Color
+      globalMatrixColor = theme.accent;
+
+      // 4. Update dynamic console feeds
+      const consoleFeed = document.getElementById('terminal-feed');
+      if (consoleFeed) {
+        const logLine = document.createElement('div');
+        logLine.className = 'text-cyber-accent font-semibold mt-2';
+        logLine.textContent = `[SYSTEM]: Accent color channel shifted to ${themeKey.toUpperCase()}. Diagnostics verified.`;
+        consoleFeed.appendChild(logLine);
+        consoleFeed.scrollTop = consoleFeed.scrollHeight;
+      }
+    });
+  });
+}
+
 // --- INITIALIZE ALL MODULES ---
 window.addEventListener('DOMContentLoaded', () => {
   initLoader();
@@ -1449,4 +1651,5 @@ window.addEventListener('DOMContentLoaded', () => {
   initFPSCounter();
   initHackerToolkit();
   initRealTimeStats();
+  initColorThemeSwitcher();
 });

@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
   let width = canvas.width = canvas.offsetWidth;
   let height = canvas.height = canvas.offsetHeight;
 
+  // Helper to resolve CSS variables dynamically
+  function getAccentColor() {
+    return getComputedStyle(document.documentElement).getPropertyValue('--cyber-accent').trim() || '#0066ff';
+  }
+  function getPurpleColor() {
+    return getComputedStyle(document.documentElement).getPropertyValue('--cyber-purple').trim() || '#0033cc';
+  }
+  function getCyanColor() {
+    return getComputedStyle(document.documentElement).getPropertyValue('--cyber-cyan').trim() || '#00a8ff';
+  }
+
   // Major digital nodes across the world grid
   const nodes = [
     { name: 'GLOBAL_SEC_NODE (Bhushan)', x: 0.68, y: 0.52, isTarget: true },
@@ -65,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Draw cyber digital coordinate background dots
   function drawBackgroundGrid() {
-    ctx.strokeStyle = 'rgba(255, 0, 0, 0.03)';
+    ctx.strokeStyle = getAccentColor() + '15';
     ctx.lineWidth = 1;
     
     // Draw crosshair grid
@@ -84,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Grid dots
-    ctx.fillStyle = 'rgba(255, 0, 0, 0.08)';
+    ctx.fillStyle = getAccentColor() + '20';
     for (let x = 20; x < width; x += 30) {
       for (let y = 20; y < height; y += 30) {
         ctx.fillRect(x, y, 1, 1);
@@ -103,16 +114,16 @@ document.addEventListener('DOMContentLoaded', () => {
       
       ctx.beginPath();
       ctx.arc(nx, ny, pulseRadius, 0, Math.PI * 2);
-      ctx.fillStyle = node.isTarget ? 'rgba(255, 0, 0, 0.15)' : 'rgba(255, 127, 0, 0.15)';
+      ctx.fillStyle = node.isTarget ? getAccentColor() + '33' : getPurpleColor() + '33';
       ctx.fill();
       ctx.lineWidth = 1;
-      ctx.strokeStyle = node.isTarget ? '#ff0000' : '#ff7700';
+      ctx.strokeStyle = node.isTarget ? getAccentColor() : getPurpleColor();
       ctx.stroke();
 
       // Core dot
       ctx.beginPath();
       ctx.arc(nx, ny, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = node.isTarget ? '#ff3b3b' : '#ffaa00';
+      ctx.fillStyle = node.isTarget ? getAccentColor() : getPurpleColor();
       ctx.fill();
 
       // Text labels
@@ -146,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
       endX, endY,
       progress: 0,
       speed: 0.012 + Math.random() * 0.008,
-      color: attackInfo.severity === 'CRITICAL' ? '#ff0055' : (attackInfo.severity === 'HIGH' ? '#ff3300' : '#ffcc00'),
+      color: attackInfo.severity === 'CRITICAL' ? getAccentColor() : (attackInfo.severity === 'HIGH' ? getPurpleColor() : getCyanColor()),
       originName: originNode.name,
       ...attackInfo
     });

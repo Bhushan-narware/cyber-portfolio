@@ -1,3 +1,25 @@
+:root {
+  --cyber-accent: #0066ff;
+  --cyber-purple: #0033cc;
+  --cyber-cyan: #00a8ff;
+  --cyber-pink: #00f0ff;
+  --cyber-border: rgba(0, 102, 255, 0.15);
+  --cyber-glow: rgba(0, 102, 255, 0.3);
+  --cyber-dark: #000000;
+  --cyber-gray: #080808;
+  --cyber-light: #101010;
+  
+  /* Alpha variations for custom classes */
+  --cyber-accent-alpha40: rgba(0, 102, 255, 0.4);
+  --cyber-purple-alpha20: rgba(0, 51, 204, 0.2);
+  --cyber-accent-alpha35: rgba(0, 102, 255, 0.35);
+  --cyber-purple-alpha35: rgba(0, 51, 204, 0.35);
+  --cyber-cyan-alpha35: rgba(0, 168, 255, 0.35);
+  --cyber-accent-alpha40-pulse: rgba(0, 102, 255, 0.4);
+  --cyber-accent-alpha10: rgba(0, 102, 255, 0.1);
+  --cyber-accent-alpha05: rgba(0, 102, 255, 0.05);
+}
+
 /* BASE STYLES & TYPOGRAPHY overrides */
 body {
   font-family: 'Inter', sans-serif;
@@ -20,14 +42,14 @@ a, button, select, input, textarea {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 102, 255, 0.4);
+  background: var(--cyber-accent-alpha40);
   border-radius: 4px;
-  border: 1px solid rgba(0, 51, 204, 0.2);
+  border: 1px solid var(--cyber-purple-alpha20);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 102, 255, 0.75);
-  box-shadow: 0 0 10px rgba(0, 102, 255, 0.65);
+  background: var(--cyber-accent);
+  box-shadow: 0 0 10px var(--cyber-accent);
 }
 
 /* Glassmorphism Styles */
@@ -38,18 +60,18 @@ a, button, select, input, textarea {
 
 /* GLOW UTILITIES */
 .glow-blue {
-  box-shadow: 0 0 15px rgba(0, 102, 255, 0.35);
-  border-color: rgba(0, 102, 255, 0.6);
+  box-shadow: 0 0 15px var(--cyber-accent-alpha35);
+  border-color: var(--cyber-accent);
 }
 
 .glow-purple {
-  box-shadow: 0 0 15px rgba(0, 51, 204, 0.35);
-  border-color: rgba(0, 51, 204, 0.6);
+  box-shadow: 0 0 15px var(--cyber-purple-alpha35);
+  border-color: var(--cyber-purple);
 }
 
 .glow-pink {
-  box-shadow: 0 0 15px rgba(0, 168, 255, 0.35);
-  border-color: rgba(0, 168, 255, 0.6);
+  box-shadow: 0 0 15px var(--cyber-cyan-alpha35);
+  border-color: var(--cyber-cyan);
 }
 
 /* GLITCH TEXT EFFECT */
@@ -70,14 +92,14 @@ a, button, select, input, textarea {
 
 .glitch-text::before {
   left: 1px;
-  text-shadow: -1px 0 #0066ff;
+  text-shadow: -1px 0 var(--cyber-accent);
   clip: rect(44px, 450px, 56px, 0);
   animation: glitch-anim 5s infinite linear alternate-reverse;
 }
 
 .glitch-text::after {
   left: -1px;
-  text-shadow: -1px 0 #ffffff, 0 1px #0066ff;
+  text-shadow: -1px 0 #ffffff, 0 1px var(--cyber-accent);
   clip: rect(85px, 450px, 140px, 0);
   animation: glitch-anim2 5s infinite linear alternate-reverse;
 }
@@ -188,7 +210,7 @@ body.light-theme .bg-cyber-black\/85 {
   transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
-  border: 1px solid rgba(0, 102, 255, 0.4);
+  border: 1px solid var(--cyber-accent-alpha40-pulse);
   border-radius: 50%;
   animation: pulse-ring 2s cubic-bezier(0.215, 0.610, 0.355, 1) infinite;
   pointer-events: none;
@@ -203,9 +225,9 @@ body.light-theme .bg-cyber-black\/85 {
 #cyber-cursor.expand {
   width: 32px;
   height: 32px;
-  background-color: rgba(0, 102, 255, 0.1);
-  border-color: rgba(0, 102, 255, 0.8);
-  box-shadow: 0 0 15px rgba(0, 102, 255, 0.5);
+  background-color: var(--cyber-accent-alpha10);
+  border-color: var(--cyber-accent);
+  box-shadow: 0 0 15px var(--cyber-accent);
 }
 
 /* Skill hover glow description triggers */
@@ -216,7 +238,7 @@ body.light-theme .bg-cyber-black\/85 {
 }
 
 .skill-container:hover {
-  background-color: rgba(0, 102, 255, 0.05);
+  background-color: var(--cyber-accent-alpha05);
 }
 
 /* Tilt effect properties */
