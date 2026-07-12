@@ -200,7 +200,7 @@ function initThreeBackground() {
 
   // Line connections between particle system
   const linesMaterial = new THREE.LineBasicMaterial({
-    color: 0x3300cc,
+    color: 0x0033cc,
     transparent: true,
     opacity: 0.15,
     blending: THREE.AdditiveBlending
@@ -295,7 +295,7 @@ function initHero3DScene() {
 
   // Outer orbital rings
   const ring1Geo = new THREE.TorusGeometry(3, 0.02, 8, 64);
-  const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x3300cc, transparent: true, opacity: 0.4 });
+  const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x0033cc, transparent: true, opacity: 0.4 });
   const orbitRing1 = new THREE.Mesh(ring1Geo, ring1Mat);
   orbitRing1.rotation.x = Math.PI / 3;
   scene.add(orbitRing1);
@@ -311,7 +311,7 @@ function initHero3DScene() {
   scene.add(hexGroup);
   
   const hexGeo = new THREE.RingGeometry(0.15, 0.2, 6);
-  const hexMat = new THREE.MeshBasicMaterial({ color: 0x00d9ff, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+  const hexMat = new THREE.MeshBasicMaterial({ color: 0x00a8ff, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
   
   const hexCount = 12;
   const hexagons = [];
