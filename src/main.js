@@ -16,6 +16,10 @@ let globalThreeHexMat = null;
 let globalThreeLight = null;
 let globalMatrixColor = '#0066ff';
 
+let currentSoundMode = 'CYBER_PAD';
+let soundInterval = null;
+let soundTimeout = null;
+
 // --- UTILITY SOUND SYNTHESIZER (Web Audio API) ---
 function initAudio() {
   if (audioCtx) return;
@@ -85,32 +89,104 @@ function startAmbientDrone() {
     audioCtx.resume();
   }
   
+  // Clear any existing instances first
+  stopAmbientDrone();
+  
   const now = audioCtx.currentTime;
   
-  // Drone oscillator
-  ambientOsc = audioCtx.createOscillator();
-  const droneGain = audioCtx.createGain();
-  
-  ambientOsc.type = 'triangle';
-  ambientOsc.frequency.setValueAtTime(55, now); // Low A hum
-  
-  // LFO to modulate volume/filter for a space-age engine throb
-  ambientLfo = audioCtx.createOscillator();
-  const lfoGain = audioCtx.createGain();
-  
-  ambientLfo.frequency.setValueAtTime(0.2, now); // 0.2Hz throb
-  lfoGain.gain.setValueAtTime(0.02, now);
-  
-  ambientLfo.connect(lfoGain);
-  lfoGain.connect(droneGain.gain); // modulate gain
-  
-  droneGain.gain.setValueAtTime(0.03, now); // Quiet background hum
-  
-  ambientOsc.connect(droneGain);
-  droneGain.connect(audioCtx.destination);
-  
-  ambientOsc.start();
-  ambientLfo.start();
+  if (currentSoundMode === 'CYBER_PAD') {
+    // Drone oscillator
+    ambientOsc = audioCtx.createOscillator();
+    const droneGain = audioCtx.createGain();
+    
+    ambientOsc.type = 'triangle';
+    ambientOsc.frequency.setValueAtTime(55, now); // Low A hum
+    
+    // LFO to modulate volume/filter for a space-age throb
+    ambientLfo = audioCtx.createOscillator();
+    const lfoGain = audioCtx.createGain();
+    
+    ambientLfo.frequency.setValueAtTime(0.2, now); // 0.2Hz throb
+    lfoGain.gain.setValueAtTime(0.02, now);
+    
+    ambientLfo.connect(lfoGain);
+    lfoGain.connect(droneGain.gain); // modulate gain
+    
+    droneGain.gain.setValueAtTime(0.03, now); // Quiet background hum
+    
+    ambientOsc.connect(droneGain);
+    droneGain.connect(audioCtx.destination);
+    
+    ambientOsc.start();
+    ambientLfo.start();
+  } else if (currentSoundMode === 'HEARTBEAT') {
+    // Sonar heartbeat loop
+    function triggerHeartbeat() {
+      if (!isAudioEnabled || currentSoundMode !== 'HEARTBEAT') return;
+      const t = audioCtx.currentTime;
+      
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(65, t);
+      osc.frequency.exponentialRampToValueAtTime(30, t + 0.5);
+      
+      gain.gain.setValueAtTime(0.06, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.85);
+      
+      // Double ping beat
+      soundTimeout = setTimeout(() => {
+        if (!isAudioEnabled || currentSoundMode !== 'HEARTBEAT') return;
+        const t2 = audioCtx.currentTime;
+        const osc2 = audioCtx.createOscillator();
+        const gain2 = audioCtx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(60, t2);
+        osc2.frequency.exponentialRampToValueAtTime(30, t2 + 0.4);
+        gain2.gain.setValueAtTime(0.04, t2);
+        gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 0.6);
+        osc2.connect(gain2);
+        gain2.connect(audioCtx.destination);
+        osc2.start(t2);
+        osc2.stop(t2 + 0.65);
+      }, 250);
+    }
+    
+    triggerHeartbeat();
+    soundInterval = setInterval(triggerHeartbeat, 2000);
+    
+  } else if (currentSoundMode === 'DATASTREAM') {
+    // Mainframe random datastream blips
+    function triggerDatastream() {
+      if (!isAudioEnabled || currentSoundMode !== 'DATASTREAM') return;
+      const t = audioCtx.currentTime;
+      
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = Math.random() > 0.5 ? 'sine' : 'triangle';
+      const randomFreq = 800 + Math.random() * 1000;
+      osc.frequency.setValueAtTime(randomFreq, t);
+      
+      gain.gain.setValueAtTime(0.004, t);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(t);
+      osc.stop(t + 0.1);
+      
+      const nextDelay = 300 + Math.random() * 800;
+      soundTimeout = setTimeout(triggerDatastream, nextDelay);
+    }
+    triggerDatastream();
+  }
 }
 
 function stopAmbientDrone() {
@@ -121,6 +197,14 @@ function stopAmbientDrone() {
   if (ambientLfo) {
     try { ambientLfo.stop(); } catch(e) {}
     ambientLfo = null;
+  }
+  if (soundInterval) {
+    clearInterval(soundInterval);
+    soundInterval = null;
+  }
+  if (soundTimeout) {
+    clearTimeout(soundTimeout);
+    soundTimeout = null;
   }
 }
 
@@ -1127,6 +1211,52 @@ function initHUDControls() {
       stopAmbientDrone();
     }
   });
+
+  // Sound Mode Switcher
+  const switchSoundBtn = document.getElementById('switch-sound-mode');
+  const soundLabel = document.getElementById('active-sound-mode-label');
+
+  if (switchSoundBtn) {
+    switchSoundBtn.addEventListener('click', () => {
+      const modes = ['CYBER_PAD', 'HEARTBEAT', 'DATASTREAM'];
+      let idx = modes.indexOf(currentSoundMode);
+      idx = (idx + 1) % modes.length;
+      currentSoundMode = modes[idx];
+      
+      if (soundLabel) {
+        soundLabel.textContent = currentSoundMode;
+      }
+      
+      // If audio is enabled, instantly restart ambient synth with new params
+      if (isAudioEnabled) {
+        startAmbientDrone();
+        playBeep(1000, 0.05, 'sawtooth');
+      } else {
+        // Just play a feedback blip
+        initAudio();
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(1000, t);
+        gain.gain.setValueAtTime(0.05, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.1);
+      }
+
+      // Print status log to the terminal console
+      const consoleFeed = document.getElementById('terminal-feed');
+      if (consoleFeed) {
+        const logLine = document.createElement('div');
+        logLine.className = 'text-cyber-accent font-semibold mt-2';
+        logLine.textContent = `[SYSTEM]: Ambient synthesizer mode shifted to ${currentSoundMode}. Buffer synchronized.`;
+        consoleFeed.appendChild(logLine);
+        consoleFeed.scrollTop = consoleFeed.scrollHeight;
+      }
+    });
+  }
 
   // Matrix rain overlay toggle
   toggleMatrixBtn.addEventListener('click', () => {
