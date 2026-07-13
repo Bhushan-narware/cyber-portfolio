@@ -20,12 +20,25 @@ let currentSoundMode = 'CYBER_PAD';
 let soundInterval = null;
 let soundTimeout = null;
 
+let analyserNode = null;
+let dataArray = null;
+let bufferLength = 0;
+let visualizerAnimationId = null;
+
 // --- UTILITY SOUND SYNTHESIZER (Web Audio API) ---
 function initAudio() {
   if (audioCtx) return;
   // Create audio context
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   audioCtx = new AudioContextClass();
+
+  // Set up analyser node
+  analyserNode = audioCtx.createAnalyser();
+  analyserNode.fftSize = 64;
+  bufferLength = analyserNode.frequencyBinCount;
+  dataArray = new Uint8Array(bufferLength);
+  
+  analyserNode.connect(audioCtx.destination);
 }
 
 function playBeep(freq = 800, duration = 0.08, type = 'sine') {
@@ -42,11 +55,13 @@ function playBeep(freq = 800, duration = 0.08, type = 'sine') {
   osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
   
   // Exponential decay envelope
-  gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  const now = audioCtx.currentTime;
+  gain.gain.setValueAtTime(0.1, now);
+  gain.gain.linearRampToValueAtTime(0.1, now + 0.2);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
   
   osc.connect(gain);
-  gain.connect(audioCtx.destination);
+  gain.connect(analyserNode || audioCtx.destination);
   
   osc.start();
   osc.stop(audioCtx.currentTime + duration);
@@ -77,7 +92,7 @@ function playExploitSound() {
   gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
   
   osc.connect(gain);
-  gain.connect(audioCtx.destination);
+  gain.connect(analyserNode || audioCtx.destination);
   
   osc.start();
   osc.stop(now + duration);
@@ -115,7 +130,7 @@ function startAmbientDrone() {
     droneGain.gain.setValueAtTime(0.03, now); // Quiet background hum
     
     ambientOsc.connect(droneGain);
-    droneGain.connect(audioCtx.destination);
+    droneGain.connect(analyserNode || audioCtx.destination);
     
     ambientOsc.start();
     ambientLfo.start();
@@ -136,7 +151,7 @@ function startAmbientDrone() {
       gain.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
       
       osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      gain.connect(analyserNode || audioCtx.destination);
       osc.start(t);
       osc.stop(t + 0.85);
       
@@ -152,7 +167,7 @@ function startAmbientDrone() {
         gain2.gain.setValueAtTime(0.04, t2);
         gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 0.6);
         osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
+        gain2.connect(analyserNode || audioCtx.destination);
         osc2.start(t2);
         osc2.stop(t2 + 0.65);
       }, 250);
@@ -178,7 +193,7 @@ function startAmbientDrone() {
       gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
       
       osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      gain.connect(analyserNode || audioCtx.destination);
       osc.start(t);
       osc.stop(t + 0.1);
       
@@ -1174,11 +1189,52 @@ function initGSAPAnimations() {
   });
 }
 
+// --- WEB AUDIO OSCILLOSCOPE RENDERER ---
+function startOscilloscope(canvas) {
+  const ctx = canvas.getContext('2d');
+  
+  // Set dimensions
+  canvas.width = canvas.offsetWidth || 40;
+  canvas.height = canvas.offsetHeight || 12;
+
+  function draw() {
+    if (!isAudioEnabled) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      visualizerAnimationId = null;
+      return;
+    }
+
+    visualizerAnimationId = requestAnimationFrame(draw);
+    
+    // Grab frequency byte data
+    analyserNode.getByteFrequencyData(dataArray);
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const barWidth = (canvas.width / bufferLength) * 1.6;
+    let barHeight;
+    let x = 0;
+    
+    const themeAccent = getComputedStyle(document.documentElement).getPropertyValue('--cyber-accent').trim() || '#0066ff';
+    ctx.fillStyle = themeAccent;
+    
+    for (let i = 0; i < bufferLength; i++) {
+      barHeight = (dataArray[i] / 255) * canvas.height * 0.95;
+      ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
+      x += barWidth;
+    }
+  }
+
+  if (!visualizerAnimationId) {
+    draw();
+  }
+}
+
 // --- INTERACTIVE UI CONTROL TRIGGERS (Header panel) ---
 function initHUDControls() {
   const toggleAudio = document.getElementById('toggle-audio');
   const audioIcon = document.getElementById('audio-icon');
-  const audioVisualizer = document.getElementById('audio-visualizer');
+  const audioVisualizer = document.getElementById('audio-oscilloscope');
   
   const toggleMatrixBtn = document.getElementById('toggle-matrix');
   const matrixCanvas = document.getElementById('matrix-canvas');
@@ -1199,14 +1255,18 @@ function initHUDControls() {
   toggleAudio.addEventListener('click', () => {
     isAudioEnabled = !isAudioEnabled;
     if (isAudioEnabled) {
-      audioIcon.className = 'hidden';
+      audioIcon.classList.add('hidden');
       audioVisualizer.classList.remove('hidden');
+      audioVisualizer.classList.add('block');
       toggleAudio.classList.add('bg-cyber-purple/20', 'border-cyber-purple');
       startAmbientDrone();
       playBeep(880, 0.1, 'sine');
+      startOscilloscope(audioVisualizer);
     } else {
       audioIcon.className = 'fa-solid fa-volume-xmark text-sm';
+      audioIcon.classList.remove('hidden');
       audioVisualizer.classList.add('hidden');
+      audioVisualizer.classList.remove('block');
       toggleAudio.classList.remove('bg-cyber-purple/20', 'border-cyber-purple');
       stopAmbientDrone();
     }

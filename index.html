@@ -177,12 +177,8 @@
         <!-- Audio Music Synth Toggle -->
         <button id="toggle-audio" class="p-2 bg-cyber-light/60 hover:bg-cyber-purple/15 border border-cyber-border hover:border-cyber-purple rounded text-slate-400 hover:text-cyber-purple transition-all flex items-center justify-center space-x-1" title="Toggle AI Ambient Sound Synth">
           <i id="audio-icon" class="fa-solid fa-volume-xmark text-sm"></i>
-          <!-- Visualizer Bar Animation when enabled -->
-          <div id="audio-visualizer" class="hidden h-3 flex items-end space-x-0.5">
-            <span class="w-[2px] h-1 bg-cyber-purple animate-[bounce_0.8s_infinite_100ms]"></span>
-            <span class="w-[2px] h-3 bg-cyber-purple animate-[bounce_0.6s_infinite_300ms]"></span>
-            <span class="w-[2px] h-2 bg-cyber-purple animate-[bounce_0.7s_infinite_200ms]"></span>
-          </div>
+          <!-- Real-Time Web Audio Oscilloscope Canvas -->
+          <canvas id="audio-oscilloscope" class="hidden w-8 h-3 bg-transparent"></canvas>
         </button>
 
         <!-- Sound Mode Switcher -->
